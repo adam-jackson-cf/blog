@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 35 56% 96%;
+    --foreground: 24 20% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 20% 16%;
+    --muted: 33 39% 91%;
+    --muted-foreground: 25 12% 40%;
+    --border: 28 24% 84%;
+    --accent: 18 72% 48%;
+    --accent-foreground: 40 100% 98%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(253, 230, 194, 0.65), transparent 22%),
+      radial-gradient(circle at 90% 8%, rgba(234, 179, 111, 0.18), transparent 20%),
+      linear-gradient(180deg, rgba(253, 248, 242, 1), rgba(246, 238, 228, 1));
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-[28px] border border-border/80 bg-card/90 shadow-card backdrop-blur;
+  }
+
+  .pill {
+    @apply inline-flex items-center rounded-full border border-border/70 bg-white/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground;
+  }
+
+  .entry-copy {
+    @apply text-sm leading-7 text-stone-700;
+  }
+}
+

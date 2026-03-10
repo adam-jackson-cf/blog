@@ -1,0 +1,20 @@
+.DS_Store
+
+# Dependencies
+node_modules/
+
+# Generated site assets
+assets/site.css
+data/summary-feed.js
+dist/
+
+# Local docs and research output
+docs/
+
+# Tooling output
+coverage/
+.cache/
+
+# Editor settings
+.vscode/
+.idea/
