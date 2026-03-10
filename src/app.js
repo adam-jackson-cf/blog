@@ -8,7 +8,7 @@ if (!app) {
 }
 
 if (!feed || !Array.isArray(feed.days)) {
-  app.innerHTML = renderEmptyState("Summary feed not found. Run `npm run build` to generate the page data.");
+  app.innerHTML = renderEmptyState("Summary feed not found. Run `bun run build` to generate the page data.");
 } else {
   createBlog(app, feed.days);
 }
@@ -17,34 +17,31 @@ function createBlog(root, days) {
   let visibleDays = Math.min(PAGE_SIZE, days.length);
 
   root.innerHTML = `
-    <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
-      <section class="surface overflow-hidden p-8 sm:p-10">
-        <div class="grid gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-end">
+    <main class="page-shell">
+      <header class="masthead">
+        <div class="masthead-grid">
           <div class="space-y-4">
-            <span class="pill">Daily summary blog</span>
-            <div class="space-y-3">
-              <h1 class="max-w-3xl text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
-                Selected items from the daily blog and arXiv summaries.
-              </h1>
-              <p class="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-                This page reads the markdown summaries in <code class="rounded bg-stone-100 px-1.5 py-0.5 text-sm text-stone-800">docs/daily-source-scans</code>
-                and renders only each selected item’s summary and source link.
-              </p>
-            </div>
+            <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Daily summary blog
+            </h1>
+            <p class="lede">
+              Selected items from the daily blog and arXiv scans, sourced from
+              <code class="inline-code">docs/daily-source-scans</code>.
+            </p>
           </div>
-          <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-            ${renderMetric("Days available", String(days.length))}
-            ${renderMetric(
+          <dl class="stats" aria-label="Feed summary">
+            ${renderStat("Days available", String(days.length))}
+            ${renderStat(
               "Selected items",
               String(days.reduce((count, day) => count + day.items.length, 0)),
             )}
-            ${renderMetric("Batch size", "7 days")}
-          </div>
+            ${renderStat("Batch size", "7 days")}
+          </dl>
         </div>
-      </section>
-      <section id="day-feed" class="space-y-8"></section>
+      </header>
+      <section id="day-feed" class="day-stack"></section>
       <div id="feed-sentinel" class="h-10 w-full"></div>
-      <footer id="feed-footer" class="pb-8 text-center text-sm text-muted-foreground"></footer>
+      <footer id="feed-footer" class="feed-footer pb-8 text-center"></footer>
     </main>
   `;
 
@@ -85,19 +82,18 @@ function createBlog(root, days) {
 
 function renderDay(day) {
   return `
-    <section class="space-y-4">
-      <div class="surface flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-end sm:justify-between">
+    <section class="day-section space-y-4">
+      <div class="day-header">
         <div class="space-y-1">
-          <p class="text-xs uppercase tracking-[0.2em] text-muted-foreground">Summary day</p>
-          <h2 class="text-2xl font-semibold text-stone-900">${formatDate(day.date)}</h2>
-          <p class="text-sm text-muted-foreground">${escapeHtml(day.coverageWindow || "Coverage window unavailable")}</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-foreground">${formatDate(day.date)}</h2>
+          <p class="day-meta">${escapeHtml(day.coverageWindow || "Coverage window unavailable")}</p>
         </div>
-        <span class="pill">${day.items.length ? `${day.items.length} item${day.items.length === 1 ? "" : "s"}` : "No selected items"}</span>
+        <p class="day-count">${day.items.length ? `${day.items.length} item${day.items.length === 1 ? "" : "s"}` : "No selected items"}</p>
       </div>
       ${
         day.items.length
-          ? `<div class="grid gap-4 lg:grid-cols-2">${day.items.map(renderItem).join("")}</div>`
-          : `<article class="surface p-6 text-sm text-muted-foreground">No selected items were published into this summary.</article>`
+          ? `<div class="collection"><div class="item-grid">${day.items.map(renderItem).join("")}</div></div>`
+          : `<article class="surface p-6 empty-note">No selected items were published into this summary.</article>`
       }
     </section>
   `;
@@ -105,39 +101,38 @@ function renderDay(day) {
 
 function renderItem(item) {
   const sourceMarkup = item.source
-    ? `<a class="inline-flex items-center gap-2 text-sm font-medium text-accent transition hover:text-orange-700" href="${escapeAttribute(
+    ? `<a class="source-link" href="${escapeAttribute(
         item.source,
       )}" target="_blank" rel="noreferrer">Open source <span aria-hidden="true">↗</span></a>`
     : "";
 
   return `
-    <article class="surface flex h-full flex-col gap-4 p-6">
+    <article class="item-card">
       <div class="space-y-3">
-        <h3 class="text-xl font-semibold leading-tight text-stone-900">${escapeHtml(item.title)}</h3>
+        <h3 class="item-title">${escapeHtml(item.title)}</h3>
         <p class="entry-copy">${escapeHtml(item.summary || "No summary text found for this selected item.")}</p>
       </div>
-      <div class="mt-auto border-t border-border/70 pt-4">
-        ${sourceMarkup || `<span class="text-sm text-muted-foreground">No source link recorded.</span>`}
+      <div class="source-row">
+        ${sourceMarkup || `<span class="empty-note">No source link recorded.</span>`}
       </div>
     </article>
   `;
 }
 
-function renderMetric(label, value) {
+function renderStat(label, value) {
   return `
-    <div class="surface p-4">
-      <p class="text-xs uppercase tracking-[0.16em] text-muted-foreground">${label}</p>
-      <p class="mt-2 text-2xl font-semibold text-stone-900">${value}</p>
+    <div class="stat">
+      <dt class="stat-label">${label}</dt>
+      <dd class="stat-value">${value}</dd>
     </div>
   `;
 }
 
 function renderEmptyState(message) {
   return `
-    <main class="mx-auto flex min-h-screen w-full max-w-3xl items-center px-4 py-12">
+    <main class="empty-state">
       <section class="surface w-full p-8 text-center">
-        <span class="pill">Daily summary blog</span>
-        <h1 class="mt-4 text-3xl font-semibold text-stone-900">Nothing to show yet</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-foreground">Nothing to show yet</h1>
         <p class="mt-3 text-base text-muted-foreground">${escapeHtml(message)}</p>
       </section>
     </main>
@@ -165,4 +160,3 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
   return escapeHtml(value);
 }
-
