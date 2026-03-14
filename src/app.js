@@ -25,7 +25,7 @@ function createBlog(root, days) {
               Daily summary blog
             </h1>
             <p class="lede">
-              Selected items from the daily blog and arXiv scans, sourced from
+              Selected items from the daily blog, arXiv, and X.com scans, sourced from
               <code class="inline-code">docs/daily-source-scans</code>.
             </p>
           </div>
@@ -100,15 +100,12 @@ function renderDay(day) {
 }
 
 function renderItem(item) {
-  const sourceMarkup = item.source
-    ? `<a class="source-link" href="${escapeAttribute(
-        item.source,
-      )}" target="_blank" rel="noreferrer">Open source <span aria-hidden="true">↗</span></a>`
-    : "";
+  const sourceMarkup = renderSourceLinks(getItemSourceLinks(item));
 
   return `
     <article class="item-card">
       <div class="space-y-3">
+        <p class="empty-note">${escapeHtml(item.streamLabel || "Summary item")}</p>
         <h3 class="item-title">${escapeHtml(item.title)}</h3>
         <p class="entry-copy">${escapeHtml(item.summary || "No summary text found for this selected item.")}</p>
       </div>
@@ -159,4 +156,89 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value);
+}
+
+function renderSourceLinks(links) {
+  if (!Array.isArray(links) || links.length === 0) {
+    return "";
+  }
+
+  const count = links.length;
+  const linksMarkup = links
+    .map((link, index) => {
+      const href = escapeAttribute(link.url ?? "");
+      const text = escapeHtml(link.label ?? "");
+      const label = text || href;
+      if (!href) {
+        return "";
+      }
+
+      return `<a class="source-link" href="${href}" target="_blank" rel="noreferrer">${label}<span aria-hidden="true">↗</span></a>`;
+    })
+    .filter(Boolean)
+    .join(count > 1 ? " <span class=\"empty-note\">·</span> " : "");
+
+  if (!linksMarkup) {
+    return "";
+  }
+
+  const prefix = count === 1 ? "Source:" : "Sources:";
+  return `<span class="empty-note">${prefix} ${linksMarkup}</span>`;
+}
+
+function getItemSourceLinks(item) {
+  if (Array.isArray(item?.sourceLinks) && item.sourceLinks.length) {
+    return item.sourceLinks;
+  }
+
+  const links = [];
+  const seen = new Set();
+  const add = (label, url) => {
+    const href = normalizeSourceUrl(url);
+    if (!href || seen.has(href)) {
+      return;
+    }
+    seen.add(href);
+    links.push({ label: label || href, url: href });
+  };
+
+  if (item?.sourceUrl) {
+    add(item.source, item.sourceUrl);
+  }
+
+  if (typeof item?.source === "string") {
+    const sourceText = item.source.trim();
+    if (sourceText) {
+      for (const raw of sourceText.replace(/\s+and\s+/gi, ",").split(/[;,]/)) {
+        const part = raw.trim();
+        if (!part) {
+          continue;
+        }
+        if (/^@[a-z0-9_]{1,15}$/i.test(part)) {
+          add(part, `https://x.com/${part.slice(1)}`);
+        } else {
+          add(part, part);
+        }
+      }
+    }
+  }
+
+  return links;
+}
+
+function normalizeSourceUrl(value) {
+  if (!value) {
+    return "";
+  }
+
+  const cleaned = String(value).trim().replace(/[)\].,;!?]+$/g, "");
+  if (/^https?:\/\//i.test(cleaned)) {
+    return cleaned;
+  }
+
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(?:\/.*)?$/i.test(cleaned)) {
+    return `https://${cleaned}`;
+  }
+
+  return "";
 }
