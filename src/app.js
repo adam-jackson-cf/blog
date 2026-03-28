@@ -150,18 +150,16 @@ function renderItem(item, { entryKey = "", isCollapsible = false, isExpanded = f
 
     return `
       <article class="entry entry-collapsible${isExpanded ? " is-expanded" : " is-collapsed"}">
-        <div class="entry-row">
-          <h3 class="item-title">${escapeHtml(item.title)}</h3>
-          <button
-            class="entry-toggle"
-            type="button"
-            aria-expanded="${isExpanded ? "true" : "false"}"
-            aria-label="${toggleLabel}"
-            data-entry-key="${escapeAttribute(entryKey)}"
-          >
-            <span aria-hidden="true">${toggleSymbol}</span>
-          </button>
-        </div>
+        <button
+          class="entry-row entry-toggle"
+          type="button"
+          aria-expanded="${isExpanded ? "true" : "false"}"
+          aria-label="${toggleLabel}"
+          data-entry-key="${escapeAttribute(entryKey)}"
+        >
+          <span class="item-title">${escapeHtml(item.title)}</span>
+          <span class="entry-toggle-icon" aria-hidden="true">${toggleSymbol}</span>
+        </button>
         ${
           isExpanded
             ? `<div class="entry-expanded">

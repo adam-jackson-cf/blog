@@ -281,12 +281,21 @@
   }
 
   .entry-row {
-    position: relative;
-    padding: 0.5rem 3rem 0.5rem 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.5rem;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
   }
 
   .entry-row .item-title {
     display: block;
+    flex: 1 1 auto;
   }
 
   .entry-expanded {
@@ -296,13 +305,17 @@
   }
 
   .entry-toggle {
+    appearance: none;
+  }
+
+  .entry-toggle:focus-visible {
+    outline: none;
+  }
+
+  .entry-toggle-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    top: 50%;
-    right: 0.5rem;
-    transform: translateY(-50%);
     width: 2rem;
     height: 2rem;
     flex: 0 0 auto;
@@ -321,8 +334,9 @@
       color 160ms ease;
   }
 
-  .entry-toggle:hover {
-    transform: translateY(calc(-50% - 1px));
+  .entry-toggle:hover .entry-toggle-icon,
+  .entry-toggle:focus-visible .entry-toggle-icon {
+    transform: translateY(-1px);
     border-color: hsl(var(--accent-deep));
     background: hsl(var(--accent-deep));
     color: hsl(var(--surface));
