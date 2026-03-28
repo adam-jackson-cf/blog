@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "2.0",
+  "passId": "pass-001",
+  "executiveSummary": "RAIDAR sits in a specific niche: real project-delivery scenarios where the experiment unit is a scenario plus a harness/model pair, scored with user-defined metrics. Among current low-cost/open-source options, Inspect AI is the closest conceptual analogue because it explicitly separates tasks, solvers, scorers, and multi-model eval-set orchestration. Promptfoo is the strongest lightweight alternative when the immediate need is repeatable model or coding-agent comparison with custom assertions and metrics. DeepEval is useful, but it behaves more like a metric-first testing framework than a full delivery-scenario experiment harness. Benchmark systems such as AgentBench, SWE-bench, and OpenHands Benchmarks are valuable adjacent baselines, but they are not direct substitutes for a user-authored scenario framework.",
+  "findings": [
+    {
+      "id": "f1",
+      "title": "Inspect AI is the closest open-source architectural match to RAIDAR",
+      "statement": "Inspect AI most closely matches RAIDARs core structure because it composes evaluations from tasks, solvers, and scorers, supports agents/tools and multi-turn execution, and can run eval sets across multiple models with persistent logs and retries. RAIDAR remains more explicitly centered on CLI harness + model pairs for delivery scenarios, but Inspect is the nearest reusable evaluation framework analogue.",
+      "confidence": "high",
+      "importance": "key",
+      "sourceIds": [
+        "src-001",
+        "src-002",
+        "src-003",
+        "src-004",
+        "src-005",
+        "src-007"
+      ]
+    },
+    {
+      "id": "f2",
+      "title": "Promptfoo is the best lightweight comparison framework for harness-model testing",
+      "statement": "Promptfoo is the strongest low-friction alternative when the goal is to compare models or coding-agent configurations repeatedly with custom assertions and metrics. Its fit is strongest for comparison matrices, coding-agent evaluation, and custom scoring; it is less opinionated than RAIDAR about project-specific execution harnesses and scenario orchestration.",
+      "confidence": "high",
+      "importance": "key",
+      "sourceIds": [
+        "src-001",
+        "src-008",
+        "src-009",
+        "src-010",
+        "src-011",
+        "src-012",
+        "src-020"
+      ]
+    },
+    {
+      "id": "f3",
+      "title": "DeepEval is complementary but not a full RAIDAR substitute",
+      "statement": "DeepEval is best understood as a metrics and regression-testing framework for LLM systems and agents. It clearly supports agentic metrics and architecture/model optimisation, but the center of gravity is test and evaluator composition rather than a first-class scenario plus harness plus model experiment matrix for project delivery work.",
+      "confidence": "medium",
+      "importance": "supporting",
+      "sourceIds": [
+        "src-001",
+        "src-013",
+        "src-014",
+        "src-021"
+      ]
+    },
+    {
+      "id": "f4",
+      "title": "Benchmark suites are adjacent, not direct substitutes",
+      "statement": "AgentBench, SWE-bench, and OpenHands Benchmarks are useful comparators because they provide benchmark tasks and evaluation harnesses, but they primarily operate as predefined benchmark systems rather than general frameworks for arbitrary user-authored delivery scenarios and harness experimentation. They are better treated as external baselines than as RAIDAR replacements.",
+      "confidence": "high",
+      "importance": "key",
+      "sourceIds": [
+        "src-001",
+        "src-015",
+        "src-016",
+        "src-017",
+        "src-018"
+      ]
+    },
+    {
+      "id": "f5",
+      "title": "Maturity and fit are not the same thing",
+      "statement": "By public GitHub adoption signals on 2026-03-15, Promptfoo is the most widely adopted direct-fit candidate, DeepEval is also highly adopted, and Inspect AI is smaller but actively maintained and more structurally aligned to RAIDAR. The best framework to study therefore depends on whether the priority is architectural similarity or market-proven adoption.",
+      "confidence": "high",
+      "importance": "supporting",
+      "sourceIds": [
+        "src-022",
+        "src-023",
+        "src-024",
+        "src-025",
+        "src-026"
+      ]
+    }
+  ],
+  "insights": [
+    {
+      "id": "i1",
+      "statement": "No single open-source project matches all of RAIDARs distinguishing traits simultaneously. Inspect AI is strongest on evaluation architecture, Promptfoo on low-friction comparison workflows, and DeepEval on metric breadth. RAIDARs distinctive angle is treating the harness itself as an experimental variable for real delivery tasks.",
+      "sourceIds": [
+        "src-001",
+        "src-002",
+        "src-008",
+        "src-013"
+      ]
+    },
+    {
+      "id": "i2",
+      "statement": "If you need external calibration, benchmark suites like SWE-bench and AgentBench should sit beside RAIDAR as reference workloads rather than replace it, because they answer a different question: performance on shared public tasks rather than suitability for your own delivery scenarios.",
+      "sourceIds": [
+        "src-001",
+        "src-015",
+        "src-016",
+        "src-018"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "r1",
+      "action": "Study Inspect AI first for architectural borrowing.",
+      "rationale": "It is the closest conceptual match to RAIDARs reusable evaluation structure, especially task composition, custom solver/scorer separation, and eval-set orchestration across models.",
+      "priority": "high",
+      "sourceIds": [
+        "src-002",
+        "src-003",
+        "src-004",
+        "src-005",
+        "src-007"
+      ]
+    },
+    {
+      "id": "r2",
+      "action": "Study Promptfoo second for lightweight matrix execution and metric ergonomics.",
+      "rationale": "Promptfoo is the most practical open-source option for repeated model/agent comparisons with flexible assertions and coding-agent evaluation flows.",
+      "priority": "high",
+      "sourceIds": [
+        "src-008",
+        "src-009",
+        "src-010",
+        "src-011",
+        "src-012"
+      ]
+    },
+    {
+      "id": "r3",
+      "action": "Treat DeepEval as a companion metric layer, not the main replacement target.",
+      "rationale": "Its strengths are evaluator breadth and agentic metrics, but it is less centered on scenario and harness experimentation for delivery work.",
+      "priority": "medium",
+      "sourceIds": [
+        "src-013",
+        "src-014",
+        "src-021"
+      ]
+    },
+    {
+      "id": "r4",
+      "action": "Keep benchmark suites in a separate comparison tier.",
+      "rationale": "This prevents conflating public benchmark harnesses with frameworks designed for user-authored delivery scenarios and custom experiment matrices.",
+      "priority": "medium",
+      "sourceIds": [
+        "src-015",
+        "src-016",
+        "src-018"
+      ]
+    }
+  ],
+  "limitations": [
+    "This study used public documentation, repo metadata, and light repository inspection rather than hands-on execution of each framework.",
+    "Commercial or higher-cost options were intentionally deprioritized because the brief preferred open-source or low-cost frameworks.",
+    "Public adoption signals were derived from GitHub metadata on 2026-03-15 and should be treated as directional rather than definitive market share."
+  ],
+  "analysisAt": "2026-03-15T19:23:19.103811Z"
+}

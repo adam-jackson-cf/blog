@@ -1,0 +1,18 @@
+🧿 oracle 0.8.6 — Cleanup crew for model-made messes—now with citations.
+Created: 2026-03-15T19:39:28.525Z
+Status: completed
+Models:
+- gpt-5.2-pro — completed tok=75/1.54k
+Prompt:
+Analyze the RAIDAR shortlist, devise a discriminating capability/feature
+comparison matrix, and score each shortlisted framework with justified
+recommendations.
+
+---
+Answer:
+I’m pulling the primary docs for RAIDAR, Inspect AI, Promptfoo, and DeepEval, then turning that into a RAIDAR-specific comparison matrix with weighted and unweighted scoring. I’ll also separate the likely winners by role: close substitute, lightweight comparison tool, and companion evaluation layer.
+
+20m36s · gpt-5.2-pro[browser] · ↑1.46k ↓75 ↻0 Δ1.54k
+files=1
+
+20m36s · gpt-5.2-pro[browser] · ↑1.46k ↓75 ↻0 Δ1.54k | files=1 | slug=raidar-shortlist-matrix

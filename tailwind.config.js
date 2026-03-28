@@ -7,21 +7,13 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         surface: "hsl(var(--surface))",
-        "surface-foreground": "hsl(var(--surface-foreground))",
         muted: "hsl(var(--muted))",
         "muted-foreground": "hsl(var(--muted-foreground))",
         border: "hsl(var(--border))",
-        accent: "hsl(var(--accent))",
-        "accent-foreground": "hsl(var(--accent-foreground))"
+        accent: "hsl(var(--accent))"
       },
       fontFamily: {
         sans: ['"Avenir Next"', '"Helvetica Neue"', "Helvetica", "sans-serif"]
-      },
-      borderRadius: {
-        panel: "12px"
-      },
-      boxShadow: {
-        panel: "0 1px 2px rgba(45, 31, 22, 0.08)"
       }
     }
   },

@@ -1,0 +1,19 @@
+{
+  "repo": "SWE-bench/SWE-bench",
+  "cloneUrl": "https://github.com/SWE-bench/SWE-bench.git",
+  "commitSha": "fa79f3af3e0f212d4d14b1c858c77fcaae5308ce",
+  "commitDate": "2026-01-04T16:01:48-05:00",
+  "defaultBranch": "main",
+  "description": "SWE-bench: Can Language Models Resolve Real-world Github Issues?",
+  "stars": 4474,
+  "forks": 793,
+  "openIssues": 90,
+  "license": "MIT",
+  "updatedAt": "2026-03-15T18:35:52Z",
+  "homepage": "https://www.swebench.com",
+  "topics": [
+    "benchmark",
+    "language-model",
+    "software-engineering"
+  ]
+}

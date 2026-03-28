@@ -1,0 +1,8 @@
+🧿 oracle 0.8.6 — Slop filter set past 11.
+Launching browser mode (gpt-5.2-pro) with ~1,464 tokens.
+This run can take up to an hour (usually ~10 minutes).
+Answer:
+I’m pulling the primary docs for RAIDAR, Inspect AI, Promptfoo, and DeepEval, then turning that into a RAIDAR-specific comparison matrix with weighted and unweighted scoring. I’ll also separate the likely winners by role: close substitute, lightweight comparison tool, and companion evaluation layer.
+
+20m36s · gpt-5.2-pro[browser] · ↑1.46k ↓75 ↻0 Δ1.54k
+files=1

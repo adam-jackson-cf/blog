@@ -1,0 +1,448 @@
+{
+  "id": "factory-ai",
+  "name": "Factory.ai Visual Design System",
+  "version": "2026-03-28",
+  "source": {
+    "homepage": "https://factory.ai/",
+    "reviewedAt": "2026-03-28",
+    "homepageLastModified": "2026-03-24T20:40:11.547Z",
+    "evidence": [
+      "Live homepage HTML",
+      "Compiled CSS tokens from /_next/static/css/4d06a8ed6eba432c.css",
+      "Font-face declarations from /_next/static/css/de70bee13400563f.css"
+    ],
+    "confidence": "high-for-tokens-medium-for-component-recipes",
+    "notes": [
+      "Color, typography, spacing, radii, and motion primitives are taken directly from the live CSS.",
+      "Component recipes are inferred from public homepage markup and compiled utility classes."
+    ]
+  },
+  "brand": {
+    "mood": [
+      "agent-native",
+      "technical",
+      "minimal",
+      "high-contrast",
+      "editor-like",
+      "precise"
+    ],
+    "designPrinciples": [
+      "Default to a near-black canvas with bright off-white text.",
+      "Use orange as a sharp accent, not as a flood color.",
+      "Favor borders, contrast, and typography over shadows or decorative fills.",
+      "Use mono uppercase micro-labels to frame sections and navigation.",
+      "Keep layouts spacious and structured with strong horizontal alignment.",
+      "Let interaction be communicated by underlines, opacity shifts, and short motion."
+    ]
+  },
+  "palette": {
+    "accent": {
+      "100": "#ef6f2e",
+      "200": "#ee6018",
+      "300": "#d15010"
+    },
+    "neutral": {
+      "100": "#d6d3d2",
+      "200": "#ccc9c7",
+      "300": "#b8b3b0",
+      "400": "#a49d9a",
+      "500": "#8a8380",
+      "600": "#5c5855",
+      "700": "#4d4947",
+      "800": "#3d3a39",
+      "900": "#2e2c2b",
+      "1000": "#1f1d1c"
+    },
+    "base": {
+      "darkPrimary": "#020202",
+      "darkSecondary": "#101010",
+      "lightPrimary": "#eeeeee",
+      "lightSecondary": "#fafafa"
+    },
+    "support": {
+      "blue400": "oklch(70.7% 0.165 254.624)",
+      "blue500": "oklch(62.3% 0.214 259.815)",
+      "green400": "oklch(79.2% 0.209 151.711)",
+      "green500": "oklch(72.3% 0.219 149.579)",
+      "yellow400": "oklch(85.2% 0.199 91.936)",
+      "yellow500": "oklch(79.5% 0.184 86.047)",
+      "red400": "oklch(70.4% 0.191 22.216)",
+      "red500": "oklch(63.7% 0.237 25.331)"
+    }
+  },
+  "themes": {
+    "defaultMode": "dark",
+    "dark": {
+      "background": "#020202",
+      "foreground": "#eeeeee",
+      "surface": "#101010",
+      "surfaceAlt": "#1f1d1c",
+      "borderStrong": "#3d3a39",
+      "borderSubtle": "#4d4947",
+      "textMuted": "#8a8380",
+      "textSoft": "#b8b3b0",
+      "accent": "#ef6f2e",
+      "accentHover": "#ee6018",
+      "accentPressed": "#d15010",
+      "selectionBackground": "#ef6f2e",
+      "selectionForeground": "#020202"
+    },
+    "light": {
+      "background": "#eeeeee",
+      "foreground": "#020202",
+      "surface": "#fafafa",
+      "surfaceAlt": "#d6d3d2",
+      "borderStrong": "#b8b3b0",
+      "borderSubtle": "#ccc9c7",
+      "textMuted": "#5c5855",
+      "textSoft": "#4d4947",
+      "accent": "#ee6018",
+      "accentHover": "#d15010",
+      "accentPressed": "#d15010",
+      "selectionBackground": "#ef6f2e",
+      "selectionForeground": "#020202"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": [
+        "Geist",
+        "Geist Fallback",
+        "system-ui",
+        "sans-serif"
+      ],
+      "mono": [
+        "Geist Mono",
+        "Geist Mono Fallback",
+        "ui-monospace",
+        "monospace"
+      ]
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "scalePx": {
+      "xs": 12,
+      "sm": 14,
+      "base": 16,
+      "lg": 18,
+      "xl": 20,
+      "2xl": 24,
+      "3xl": 30,
+      "4xl": 36,
+      "5xl": 48,
+      "6xl": 60,
+      "7xl": 72
+    },
+    "lineHeight": {
+      "tight": 1.25,
+      "snug": 1.375,
+      "relaxed": 1.625,
+      "loose": 2
+    },
+    "tracking": {
+      "tight": "-0.025em",
+      "normal": "0em",
+      "wider": "0.05em",
+      "microLabel": "-0.015rem"
+    },
+    "patterns": {
+      "display": {
+        "fontFamily": "sans",
+        "weight": 500,
+        "sizeRangePx": [
+          40,
+          72
+        ],
+        "lineHeight": 1,
+        "tracking": "-0.025em",
+        "usage": "Hero headlines and big section statements"
+      },
+      "sectionLabel": {
+        "fontFamily": "mono",
+        "weight": 500,
+        "sizePx": 12,
+        "lineHeight": 1,
+        "tracking": "-0.015rem",
+        "transform": "uppercase",
+        "usage": "Navigation items, small badges, section metadata"
+      },
+      "body": {
+        "fontFamily": "sans",
+        "weight": 400,
+        "sizeRangePx": [
+          16,
+          18
+        ],
+        "lineHeight": 1.625,
+        "usage": "Main marketing copy and article intros"
+      },
+      "meta": {
+        "fontFamily": "sans",
+        "weight": 400,
+        "sizeRangePx": [
+          12,
+          14
+        ],
+        "lineHeight": 1,
+        "usage": "Footer links, secondary copy, status text"
+      }
+    }
+  },
+  "spacing": {
+    "baseUnitPx": 4,
+    "commonStepsPx": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      32,
+      40,
+      48,
+      64,
+      80,
+      96
+    ],
+    "usage": {
+      "inlineTightPx": 8,
+      "inlineComfortPx": 12,
+      "componentPaddingPx": 16,
+      "sectionGapPx": 48,
+      "pagePaddingMobilePx": 16,
+      "pagePaddingDesktopPx": 36
+    }
+  },
+  "radii": {
+    "xs": 2,
+    "sm": 4,
+    "md": 6,
+    "lg": 8,
+    "xl": 12,
+    "2xl": 16,
+    "3xl": 24,
+    "pill": 9999
+  },
+  "layout": {
+    "page": {
+      "maxCanvasWidthPx": 1920,
+      "scrollPaddingTop": {
+        "desktopPx": 80,
+        "mobilePx": 170
+      }
+    },
+    "containers": {
+      "sm": 640,
+      "md": 768,
+      "lg": 1024,
+      "xl": 1280,
+      "2xl": 1536,
+      "3xl": 1920
+    },
+    "header": {
+      "position": "sticky",
+      "top": 0,
+      "zIndex": 60,
+      "hasBorder": true,
+      "paddingX": {
+        "mobilePx": 16,
+        "desktopPx": 36
+      },
+      "paddingY": 20
+    },
+    "principles": [
+      "Use strong horizontal bands divided by subtle borders.",
+      "Keep most content in centered containers with generous whitespace.",
+      "Prefer stacked content on mobile and wide grids only once the viewport is comfortable.",
+      "Use panels and cards as dark-on-dark tonal shifts rather than distinct colored modules."
+    ]
+  },
+  "motion": {
+    "timing": {
+      "defaultMs": 150,
+      "slowMs": 200,
+      "panelMs": 250,
+      "underlineMs": 300
+    },
+    "easing": {
+      "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "out": "cubic-bezier(0, 0, 0.2, 1)"
+    },
+    "patterns": {
+      "linkUnderline": {
+        "property": "width",
+        "durationMs": 300,
+        "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+      },
+      "navColorFade": {
+        "property": "color, opacity",
+        "durationMs": 200
+      },
+      "navPanelScale": {
+        "enter": "scale from 0.95 to 1 with fade",
+        "exit": "scale from 1 to 0.95 with fade",
+        "durationMs": 250
+      },
+      "contentSlide": {
+        "enterFromLeftPx": 100,
+        "enterFromRightPx": 100,
+        "exitToLeftPx": 200,
+        "exitToRightPx": 200,
+        "durationMs": 250
+      }
+    }
+  },
+  "components": {
+    "headerNav": {
+      "typography": "mono 12px uppercase",
+      "defaultColor": "textMuted",
+      "hoverColor": "accent",
+      "interaction": [
+        "animate underline from left to right",
+        "dim sibling items on group hover",
+        "rotate chevrons on open states"
+      ]
+    },
+    "primaryButton": {
+      "shape": "small rounded rectangle",
+      "radiusPx": 4,
+      "paddingX": {
+        "compactPx": 12,
+        "comfortablePx": 14
+      },
+      "paddingY": 8,
+      "font": "sans 12px to 14px medium",
+      "darkMode": {
+        "background": "#fafafa",
+        "text": "#020202",
+        "border": "transparent"
+      },
+      "lightMode": {
+        "background": "#020202",
+        "text": "#fafafa",
+        "border": "transparent"
+      }
+    },
+    "secondaryButton": {
+      "shape": "small rounded rectangle",
+      "radiusPx": 4,
+      "paddingX": {
+        "compactPx": 12,
+        "comfortablePx": 14
+      },
+      "paddingY": 8,
+      "font": "sans 12px to 14px medium",
+      "darkMode": {
+        "background": "#1f1d1c",
+        "text": "#eeeeee",
+        "border": "#4d4947"
+      },
+      "lightMode": {
+        "background": "#fafafa",
+        "text": "#020202",
+        "border": "#b8b3b0"
+      }
+    },
+    "pillBadge": {
+      "shape": "full pill",
+      "radiusPx": 9999,
+      "font": "mono or sans 12px",
+      "darkMode": {
+        "background": "#d15010",
+        "text": "#eeeeee"
+      },
+      "lightMode": {
+        "background": "#d15010",
+        "text": "#fafafa"
+      }
+    },
+    "contentPanel": {
+      "radiusPx": 8,
+      "darkMode": {
+        "background": "#101010",
+        "border": "#3d3a39"
+      },
+      "lightMode": {
+        "background": "#fafafa",
+        "border": "#b8b3b0"
+      },
+      "paddingPx": [
+        16,
+        24
+      ]
+    },
+    "card": {
+      "radiusPx": 8,
+      "background": "surface",
+      "border": "borderStrong",
+      "titleSizePx": [
+        16,
+        18
+      ],
+      "metaSizePx": [
+        12,
+        14
+      ],
+      "notes": [
+        "Cards rely on border and spacing more than shadow.",
+        "Use muted text for descriptions and metadata."
+      ]
+    },
+    "codeInline": {
+      "fontFamily": "mono",
+      "radiusPx": 4,
+      "darkMode": {
+        "background": "rgba(31,29,28,0.5)",
+        "border": "#3d3a39",
+        "text": "#ef6f2e"
+      },
+      "lightMode": {
+        "background": "rgba(31,29,28,0.5)",
+        "border": "#b8b3b0",
+        "text": "#ee6018"
+      }
+    }
+  },
+  "blogMapping": {
+    "recommendedThemeMode": "dark",
+    "cssVariables": {
+      "--background": "#020202",
+      "--foreground": "#eeeeee",
+      "--surface": "#101010",
+      "--surface-foreground": "#eeeeee",
+      "--muted": "#1f1d1c",
+      "--muted-foreground": "#8a8380",
+      "--border": "#3d3a39",
+      "--accent": "#ef6f2e",
+      "--accent-foreground": "#020202"
+    },
+    "tailwindSemanticIntent": {
+      "background": "page canvas",
+      "foreground": "primary text",
+      "surface": "cards and elevated panels",
+      "muted": "low-emphasis fills and code backgrounds",
+      "border": "default dividers",
+      "accent": "hover, links, tags, selection, emphasis"
+    }
+  },
+  "implementationGuidance": {
+    "do": [
+      "Use mono uppercase labels sparingly to structure sections.",
+      "Apply orange only on interactive emphasis and small status elements.",
+      "Keep panels dark and tonal instead of using many separate background colors.",
+      "Use animated underlines for links instead of boxed hover states.",
+      "Preserve large headline scale and tight tracking for hero moments."
+    ],
+    "avoid": [
+      "Large soft shadows",
+      "Saturated multi-color gradients as a primary identity device",
+      "Rounded-corner excess beyond 8px except for pills",
+      "Dense card grids without breathing room",
+      "Heavy accent fills behind long-form article content"
+    ]
+  }
+}

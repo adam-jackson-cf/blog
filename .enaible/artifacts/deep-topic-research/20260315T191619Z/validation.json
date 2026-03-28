@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "2.0",
+  "validatedAt": "2026-03-15T19:22:01.026825Z",
+  "status": "pass",
+  "questions": [
+    {
+      "questionId": "q1",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "questionId": "q2",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "questionId": "q3",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "questionId": "q4",
+      "issues": [],
+      "warnings": []
+    }
+  ]
+}

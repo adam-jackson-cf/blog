@@ -1,0 +1,22 @@
+{
+  "repo": "confident-ai/deepeval",
+  "cloneUrl": "https://github.com/confident-ai/deepeval.git",
+  "commitSha": "053c3fee948b3690e56e35c4b99fb99c63382e76",
+  "commitDate": "2026-03-13T14:02:19+07:00",
+  "defaultBranch": "main",
+  "description": "The LLM Evaluation Framework",
+  "stars": 14100,
+  "forks": 1288,
+  "openIssues": 241,
+  "license": "Apache-2.0",
+  "updatedAt": "2026-03-15T16:00:16Z",
+  "homepage": "https://deepeval.com",
+  "topics": [
+    "evaluation-framework",
+    "evaluation-metrics",
+    "llm-evaluation",
+    "llm-evaluation-framework",
+    "llm-evaluation-metrics",
+    "python"
+  ]
+}

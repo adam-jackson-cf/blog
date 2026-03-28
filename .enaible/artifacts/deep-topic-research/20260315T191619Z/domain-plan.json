@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "2.0",
+  "planId": "primary",
+  "plannedAt": "2026-03-15T19:16:25.917899Z",
+  "domainMapVersion": "2026-01-09",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Which currently maintained open-source or low-cost evaluation frameworks are the closest functional matches to RAIDAR's scenario + harness + model + metric experiment structure for project delivery tasks?",
+      "domains": [
+        "technical"
+      ],
+      "primaryDomain": "technical",
+      "recencyPolicy": {
+        "preferredMonths": 12,
+        "maxMonths": 24
+      },
+      "expectedSourceTypes": [
+        "official-docs",
+        "repository",
+        "academic",
+        "industry-report",
+        "community"
+      ],
+      "rationale": {
+        "override": true,
+        "keywords": [],
+        "patterns": []
+      }
+    },
+    {
+      "id": "q2",
+      "text": "For the closest candidates, what first-class support exists for defining reusable scenarios, swapping harness/model pairs, and scoring runs with custom metrics or evaluators?",
+      "domains": [
+        "technical"
+      ],
+      "primaryDomain": "technical",
+      "recencyPolicy": {
+        "preferredMonths": 12,
+        "maxMonths": 24
+      },
+      "expectedSourceTypes": [
+        "official-docs",
+        "repository",
+        "academic",
+        "industry-report",
+        "community"
+      ],
+      "rationale": {
+        "override": true,
+        "keywords": [],
+        "patterns": []
+      }
+    },
+    {
+      "id": "q3",
+      "text": "Which candidates are sufficiently mature to count as highly rated, using public adoption and maintenance signals such as GitHub stars, licensing, documentation, and recent activity?",
+      "domains": [
+        "technical"
+      ],
+      "primaryDomain": "technical",
+      "recencyPolicy": {
+        "preferredMonths": 12,
+        "maxMonths": 24
+      },
+      "expectedSourceTypes": [
+        "official-docs",
+        "repository",
+        "academic",
+        "industry-report",
+        "community"
+      ],
+      "rationale": {
+        "override": true,
+        "keywords": [],
+        "patterns": []
+      }
+    },
+    {
+      "id": "q4",
+      "text": "Which commonly cited agent-evaluation systems are adjacent but not direct substitutes because they focus on fixed benchmark suites, agent-skill tests, or limited harness-level experimentation?",
+      "domains": [
+        "technical"
+      ],
+      "primaryDomain": "technical",
+      "recencyPolicy": {
+        "preferredMonths": 12,
+        "maxMonths": 24
+      },
+      "expectedSourceTypes": [
+        "official-docs",
+        "repository",
+        "academic",
+        "industry-report",
+        "community"
+      ],
+      "rationale": {
+        "override": true,
+        "keywords": [],
+        "patterns": []
+      }
+    }
+  ],
+  "summary": {
+    "technical": 4
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "repo": "UKGovernmentBEIS/inspect_ai",
+  "cloneUrl": "https://github.com/UKGovernmentBEIS/inspect_ai.git",
+  "commitSha": "a1cb9c2d5dd6835b4e1e75d0607e5c58daf06b66",
+  "commitDate": "2026-03-15T11:28:00-07:00",
+  "defaultBranch": "main",
+  "description": "Inspect: A framework for large language model evaluations",
+  "stars": 1828,
+  "forks": 426,
+  "openIssues": 158,
+  "license": "MIT",
+  "updatedAt": "2026-03-15T18:28:08Z",
+  "homepage": "https://inspect.aisi.org.uk/",
+  "topics": []
+}

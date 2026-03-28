@@ -1,0 +1,15 @@
+{
+  "repo": "OpenHands/benchmarks",
+  "cloneUrl": "https://github.com/OpenHands/benchmarks.git",
+  "commitSha": "628139da22447fdec3f48317b9c04297e69f6e0f",
+  "commitDate": "2026-03-13T22:44:55+01:00",
+  "defaultBranch": "main",
+  "description": "Evaluation harness for OpenHands V1.",
+  "stars": 57,
+  "forks": 46,
+  "openIssues": 88,
+  "license": "MIT",
+  "updatedAt": "2026-03-14T02:58:35Z",
+  "homepage": null,
+  "topics": []
+}

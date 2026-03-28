@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "2.0",
+  "runId": "deep-topic-research-20260315T191619Z",
+  "startedAt": "2026-03-15T19:16:19.430274Z",
+  "artifactRoot": "/Users/adamjackson/Projects/blog/.enaible/artifacts/deep-topic-research/20260315T191619Z",
+  "objective": "Identify high-quality evaluation frameworks comparable to RAIDAR for software delivery task experimentation across scenario, harness, model, and metric dimensions.",
+  "scope": "Current-state technical comparison of open-source or low-cost frameworks and benchmark systems that can evaluate software-delivery or agentic delivery tasks; prioritize frameworks that support scenario definitions, repeated experiments, model variation, harness variation, and custom metrics; exclude purely generic prompt testing tools unless they materially support agent/workflow evaluation; prefer sources from 2024-2026.",
+  "outputFormat": "Detailed report with comparative matrix and shortlist recommendations.",
+  "decisionContext": "Inform whether RAIDAR has close alternatives to learn from, borrow from, or benchmark against when designing harness engineering and model-selection workflows for project delivery tasks.",
+  "onlineResearch": "allowed",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Which currently maintained open-source or low-cost evaluation frameworks are the closest functional matches to RAIDAR's scenario + harness + model + metric experiment structure for project delivery tasks?"
+    },
+    {
+      "id": "q2",
+      "text": "For the closest candidates, what first-class support exists for defining reusable scenarios, swapping harness/model pairs, and scoring runs with custom metrics or evaluators?"
+    },
+    {
+      "id": "q3",
+      "text": "Which candidates are sufficiently mature to count as highly rated, using public adoption and maintenance signals such as GitHub stars, licensing, documentation, and recent activity?"
+    },
+    {
+      "id": "q4",
+      "text": "Which commonly cited agent-evaluation systems are adjacent but not direct substitutes because they focus on fixed benchmark suites, agent-skill tests, or limited harness-level experimentation?"
+    }
+  ],
+  "constraints": {
+    "timeConstraints": null,
+    "targetAudience": "Repository owner evaluating adjacent frameworks and design inspiration.",
+    "domainFocus": [
+      "LLM/agent evaluation frameworks for software engineering and project delivery tasks."
+    ],
+    "existingKnowledge": "Tessl appears adjacent but is believed to focus more on agent skills across a project view than on arbitrary harness+model+scenario experimentation.",
+    "hardConstraints": null,
+    "notes": null
+  },
+  "capabilities": {
+    "required": [
+      "public-web-search",
+      "git"
+    ],
+    "available": [
+      "public-web-search",
+      "git"
+    ],
+    "blocked": [],
+    "rescopePlan": []
+  },
+  "sources": {
+    "allowed": [
+      "github.com",
+      "docs.inspect.ai",
+      "promptfoo.dev",
+      "microsoft.github.io",
+      "arxiv.org",
+      "swebench.com",
+      "openhands.ai"
+    ],
+    "blocked": null
+  }
+}

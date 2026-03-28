@@ -1,0 +1,26 @@
+{
+  "repo": "microsoft/autogen",
+  "cloneUrl": "https://github.com/microsoft/autogen.git",
+  "commitSha": "b0477309d2a0baf489aa256646e41e513ab3bfe8",
+  "commitDate": "2026-03-11T12:42:46-07:00",
+  "defaultBranch": "main",
+  "description": "A programming framework for agentic AI",
+  "stars": 55644,
+  "forks": 8396,
+  "openIssues": 675,
+  "license": "CC-BY-4.0",
+  "updatedAt": "2026-03-15T19:08:11Z",
+  "homepage": "https://microsoft.github.io/autogen/",
+  "topics": [
+    "agentic",
+    "agentic-agi",
+    "agents",
+    "ai",
+    "autogen",
+    "autogen-ecosystem",
+    "chatgpt",
+    "framework",
+    "llm-agent",
+    "llm-framework"
+  ]
+}
