@@ -13,7 +13,8 @@ module.exports = {
         accent: "hsl(var(--accent))"
       },
       fontFamily: {
-        sans: ['"Avenir Next"', '"Helvetica Neue"', "Helvetica", "sans-serif"]
+        sans: ['"Geist"', '"Avenir Next"', '"Helvetica Neue"', "Helvetica", "Arial", "sans-serif"],
+        mono: ['"Geist Mono"', '"SFMono-Regular"', "Menlo", "Monaco", "Consolas", '"Liberation Mono"', "monospace"]
       }
     }
   },

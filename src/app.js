@@ -16,13 +16,24 @@ if (!feed || !Array.isArray(feed.days)) {
 function createBlog(root, days) {
   let visibleDays = Math.min(PAGE_SIZE, days.length);
   const openEntries = new Set();
+  const totalItems = days.reduce((count, day) => count + day.items.length, 0);
 
   root.innerHTML = `
     <main class="page-shell">
       <header class="page-header">
         <div class="page-intro">
-          <h1 class="page-title">Daily research</h1>
-          <p class="page-description">Selected items from the daily blog, arXiv, and X.com scans.</p>
+          <p class="page-kicker"><span class="page-kicker-dot" aria-hidden="true"></span>Research / Feed</p>
+          <div class="page-hero">
+            <div class="page-copy">
+              <h1 class="page-title">Daily research.</h1>
+              <p class="page-description">Selected items from the daily blog, arXiv, and X.com scans, arranged as a working feed instead of a dump.</p>
+            </div>
+            <dl class="page-stats" aria-label="Feed overview">
+              ${renderStat("Days", String(days.length))}
+              ${renderStat("Items", String(totalItems))}
+              ${renderStat("Window", formatCoverageRange(days))}
+            </dl>
+          </div>
         </div>
       </header>
       <section id="day-feed" class="day-stack"></section>
@@ -106,7 +117,12 @@ function renderDay(day, { dayIndex = 0, isCollapsedDay = false, openEntries } = 
         </header>
         ${
           hasItems
-            ? `<div class="day-entries${isCollapsedDay ? " day-entries-collapsed" : ""}">${day.items
+            ? `<div class="day-entries${isCollapsedDay ? " day-entries-collapsed" : ""}">
+                <div class="day-entries-chrome">
+                  <span class="day-entries-dot" aria-hidden="true"></span>
+                  <p class="day-entries-label">${escapeHtml(formatDayChromeLabel(day))}</p>
+                </div>
+                ${day.items
                 .map((item, itemIndex) =>
                   renderItem(item, {
                     entryKey: `${day.date}:${dayIndex}:${itemIndex}`,
@@ -189,6 +205,60 @@ function renderEmptyState(message) {
   `;
 }
 
+function renderStat(label, value) {
+  return `
+    <div class="page-stat">
+      <dt class="page-stat-label">${label}</dt>
+      <dd class="page-stat-value">${value}</dd>
+    </div>
+  `;
+}
+
+function formatCoverageRange(days) {
+  if (!Array.isArray(days) || days.length === 0) {
+    return "No data";
+  }
+
+  const newest = days[0]?.date;
+  const oldest = days[days.length - 1]?.date;
+
+  if (!newest || !oldest) {
+    return "No data";
+  }
+
+  if (newest === oldest) {
+    return formatRangeDate(newest);
+  }
+
+  return `${formatRangeDate(oldest)} - ${formatRangeDate(newest)}`;
+}
+
+function formatDayChromeLabel(day) {
+  if (!Array.isArray(day?.sources) || day.sources.length === 0) {
+    return "Selected items";
+  }
+
+  return day.sources
+    .map((source) => {
+      const label = typeof source?.label === "string" ? source.label.trim() : "";
+      if (/blog and arxiv/i.test(label)) {
+        return "Blog + arXiv";
+      }
+      if (/x\.com/i.test(label)) {
+        return "X.com";
+      }
+      return label.replace(/\s+summary$/i, "") || "Source";
+    })
+    .join(" / ");
+}
+
+function formatRangeDate(value) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+  }).format(new Date(`${value}T00:00:00`));
+}
+
 function formatDayStamp(value, itemCount) {
   const date = new Date(`${value}T00:00:00`);
   const year = String(date.getFullYear()).slice(-2);
@@ -223,7 +293,7 @@ function renderSourceLinks(links) {
         return "";
       }
 
-      const label = `Link ${index + 1}`;
+      const label = formatSourceLabel(link) || `Source ${index + 1}`;
       return `<a class="source-link" href="${href}" target="_blank" rel="noreferrer" aria-label="Open source ${index + 1}">${label}<span aria-hidden="true">↗</span></a>`;
     })
     .filter(Boolean)
@@ -235,6 +305,24 @@ function renderSourceLinks(links) {
 
   const prefix = count === 1 ? "Source:" : "Sources:";
   return `<span class="empty-note">${prefix} ${linksMarkup}</span>`;
+}
+
+function formatSourceLabel(link) {
+  const rawLabel = typeof link?.label === "string" ? link.label.trim() : "";
+  if (rawLabel && !/^https?:\/\//i.test(rawLabel)) {
+    return escapeHtml(rawLabel);
+  }
+
+  const href = typeof link?.url === "string" ? link.url.trim() : "";
+  if (!href) {
+    return "";
+  }
+
+  try {
+    return escapeHtml(new URL(href).hostname.replace(/^www\./i, ""));
+  } catch {
+    return escapeHtml(href);
+  }
 }
 
 function getItemSourceLinks(item) {
