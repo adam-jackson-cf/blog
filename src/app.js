@@ -16,24 +16,20 @@ if (!feed || !Array.isArray(feed.days)) {
 function createBlog(root, days) {
   let visibleDays = Math.min(PAGE_SIZE, days.length);
   const openEntries = new Set();
-  const totalItems = days.reduce((count, day) => count + day.items.length, 0);
+  const generatedLabel = formatGeneratedAt(feed?.generatedAt);
 
   root.innerHTML = `
     <main class="page-shell">
+      <div class="page-rail" aria-label="Feed status">
+        <p class="page-rail-brand">Daily research archive</p>
+        <div class="page-rail-meta">
+          <span class="page-rail-chip">Static feed</span>
+          <span class="page-rail-note">${generatedLabel}</span>
+        </div>
+      </div>
       <header class="page-header">
         <div class="page-intro">
           <p class="page-kicker"><span class="page-kicker-dot" aria-hidden="true"></span>Research / Feed</p>
-          <div class="page-hero">
-            <div class="page-copy">
-              <h1 class="page-title">Daily research.</h1>
-              <p class="page-description">Selected items from the daily blog, arXiv, and X.com scans, arranged as a working feed instead of a dump.</p>
-            </div>
-            <dl class="page-stats" aria-label="Feed overview">
-              ${renderStat("Days", String(days.length))}
-              ${renderStat("Items", String(totalItems))}
-              ${renderStat("Window", formatCoverageRange(days))}
-            </dl>
-          </div>
         </div>
       </header>
       <section id="day-feed" class="day-stack"></section>
@@ -67,12 +63,15 @@ function createBlog(root, days) {
   });
 
   const render = () => {
-    dayFeed.innerHTML = days
-      .slice(0, visibleDays)
+    const visibleFeedDays = days.slice(0, visibleDays);
+    const firstPopulatedDayIndex = visibleFeedDays.findIndex((day) => day.items.length > 0);
+
+    dayFeed.innerHTML = visibleFeedDays
       .map((day, index) =>
         renderDay(day, {
           dayIndex: index,
           isCollapsedDay: day.items.length > 0,
+          isLatestPopulatedDay: index === firstPopulatedDayIndex,
           openEntries,
         }),
       )
@@ -106,7 +105,7 @@ function createBlog(root, days) {
   observer.observe(sentinel);
 }
 
-function renderDay(day, { dayIndex = 0, isCollapsedDay = false, openEntries } = {}) {
+function renderDay(day, { dayIndex = 0, isCollapsedDay = false, isLatestPopulatedDay = false, openEntries } = {}) {
   const hasItems = day.items.length > 0;
 
   return `
@@ -117,20 +116,23 @@ function renderDay(day, { dayIndex = 0, isCollapsedDay = false, openEntries } = 
         </header>
         ${
           hasItems
-            ? `<div class="day-entries${isCollapsedDay ? " day-entries-collapsed" : ""}">
+            ? `<div class="day-entries${isCollapsedDay ? " day-entries-collapsed" : ""}${isLatestPopulatedDay ? " day-entries-latest" : ""}">
                 <div class="day-entries-chrome">
                   <span class="day-entries-dot" aria-hidden="true"></span>
                   <p class="day-entries-label">${escapeHtml(formatDayChromeLabel(day))}</p>
                 </div>
-                ${day.items
-                .map((item, itemIndex) =>
-                  renderItem(item, {
-                    entryKey: `${day.date}:${dayIndex}:${itemIndex}`,
-                    isCollapsible: isCollapsedDay,
-                    isExpanded: openEntries?.has(`${day.date}:${dayIndex}:${itemIndex}`),
-                  }),
-                )
-                .join("")}</div>`
+                <div class="entry-grid">
+                  ${day.items
+                    .map((item, itemIndex) =>
+                      renderItem(item, {
+                        entryKey: `${day.date}:${dayIndex}:${itemIndex}`,
+                        isCollapsible: isCollapsedDay,
+                        isExpanded: openEntries?.has(`${day.date}:${dayIndex}:${itemIndex}`),
+                      }),
+                    )
+                    .join("")}
+                </div>
+              </div>`
             : `<article class="empty-panel">No selected items were published into this summary.</article>`
         }
       </div>
@@ -139,7 +141,8 @@ function renderDay(day, { dayIndex = 0, isCollapsedDay = false, openEntries } = 
 }
 
 function renderItem(item, { entryKey = "", isCollapsible = false, isExpanded = false } = {}) {
-  const sourceMarkup = renderSourceLinks(getItemSourceLinks(item));
+  const sourceLinks = getItemSourceLinks(item);
+  const sourceMarkup = renderSourceLinks(sourceLinks);
 
   if (isCollapsible) {
     const toggleLabel = isExpanded ? "Collapse row" : "Expand row";
@@ -162,14 +165,11 @@ function renderItem(item, { entryKey = "", isCollapsible = false, isExpanded = f
         ${
           isExpanded
             ? `<div class="entry-expanded">
-                <div class="entry-meta">
-                  <p class="entry-stream">${escapeHtml(item.streamLabel || "Summary item")}</p>
-                  <div class="entry-links">
-                    ${sourceMarkup || `<span class="empty-note">No source link recorded.</span>`}
-                  </div>
-                </div>
                 <div class="entry-body">
                   <p class="entry-copy">${escapeHtml(item.summary || "No summary text found for this selected item.")}</p>
+                </div>
+                <div class="entry-links">
+                  ${sourceMarkup || `<span class="empty-note">No source link recorded.</span>`}
                 </div>
               </div>`
             : ""
@@ -180,15 +180,12 @@ function renderItem(item, { entryKey = "", isCollapsible = false, isExpanded = f
 
   return `
     <article class="entry">
-      <div class="entry-meta">
-        <p class="entry-stream">${escapeHtml(item.streamLabel || "Summary item")}</p>
-        <div class="entry-links">
-          ${sourceMarkup || `<span class="empty-note">No source link recorded.</span>`}
-        </div>
-      </div>
+      <h3 class="item-title">${escapeHtml(item.title)}</h3>
       <div class="entry-body">
-        <h3 class="item-title">${escapeHtml(item.title)}</h3>
         <p class="entry-copy">${escapeHtml(item.summary || "No summary text found for this selected item.")}</p>
+      </div>
+      <div class="entry-links">
+        ${sourceMarkup || `<span class="empty-note">No source link recorded.</span>`}
       </div>
     </article>
   `;
@@ -205,32 +202,22 @@ function renderEmptyState(message) {
   `;
 }
 
-function renderStat(label, value) {
-  return `
-    <div class="page-stat">
-      <dt class="page-stat-label">${label}</dt>
-      <dd class="page-stat-value">${value}</dd>
-    </div>
-  `;
-}
-
-function formatCoverageRange(days) {
-  if (!Array.isArray(days) || days.length === 0) {
-    return "No data";
+function formatGeneratedAt(value) {
+  if (!value) {
+    return "Updated recently";
   }
 
-  const newest = days[0]?.date;
-  const oldest = days[days.length - 1]?.date;
-
-  if (!newest || !oldest) {
-    return "No data";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Updated recently";
   }
 
-  if (newest === oldest) {
-    return formatRangeDate(newest);
-  }
-
-  return `${formatRangeDate(oldest)} - ${formatRangeDate(newest)}`;
+  return `Updated ${new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date)}`;
 }
 
 function formatDayChromeLabel(day) {
@@ -250,13 +237,6 @@ function formatDayChromeLabel(day) {
       return label.replace(/\s+summary$/i, "") || "Source";
     })
     .join(" / ");
-}
-
-function formatRangeDate(value) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-  }).format(new Date(`${value}T00:00:00`));
 }
 
 function formatDayStamp(value, itemCount) {
@@ -285,8 +265,7 @@ function renderSourceLinks(links) {
     return "";
   }
 
-  const count = links.length;
-  const linksMarkup = links
+  const sourceItems = links
     .map((link, index) => {
       const href = escapeAttribute(link.url ?? "");
       if (!href) {
@@ -294,17 +273,22 @@ function renderSourceLinks(links) {
       }
 
       const label = formatSourceLabel(link) || `Source ${index + 1}`;
-      return `<a class="source-link" href="${href}" target="_blank" rel="noreferrer" aria-label="Open source ${index + 1}">${label}<span aria-hidden="true">↗</span></a>`;
+      return `<li class="source-list-item"><a class="source-link" href="${href}" target="_blank" rel="noreferrer" aria-label="Open source ${index + 1}">${label}<span aria-hidden="true">↗</span></a></li>`;
     })
-    .filter(Boolean)
-    .join(count > 1 ? " <span class=\"empty-note\">·</span> " : "");
+    .filter(Boolean);
 
-  if (!linksMarkup) {
+  if (sourceItems.length === 0) {
     return "";
   }
 
-  const prefix = count === 1 ? "Source:" : "Sources:";
-  return `<span class="empty-note">${prefix} ${linksMarkup}</span>`;
+  return `
+    <div class="source-block">
+      <span class="empty-note source-block-label">Source:</span>
+      <ul class="source-list">
+        ${sourceItems.join("")}
+      </ul>
+    </div>
+  `;
 }
 
 function formatSourceLabel(link) {
