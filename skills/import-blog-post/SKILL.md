@@ -63,13 +63,13 @@ Use only these canonical multi-select topic values in article frontmatter:
 - Purpose: convert the approved local design references into explicit rules for the article detail page and feed treatment.
 - When: run before implementation so the page can be built without improvisation.
 - Inspect `assets/design.png`, `assets/design2.png`, `assets/factory-missions-hero.png`, `assets/factory-missions-practice.png`, and `assets/factory-missions-how-to-use.png`.
-- Define the canonical detail-page structure as the shared site header with the back link on a header row above the article-title hero, plus a narrow left `On This Page` rail and a wider right reading column.
+- Define the canonical detail-page structure as the shared site header with a section-level research-feed hero, plus a narrow left rail that starts with the back link and continues into the table of contents beside a wider right reading column.
 - Define the canonical feed entry as the existing collapsible research-feed item pattern with the `Article` row expanded by default, not a bespoke CTA card.
 - Define typography, spacing, accent, callout, navigation, body-copy, bullet-list, and media-embed rules for the article detail page and feed entry.
 - Keep the page text-led on an ivory-light canvas with thin rules, mono metadata, restrained orange markers, and no invented hero image when the source article has none.
 - Apply `uncodixfy` constraints so the result stays restrained, text-led, and free of generic AI UI patterns.
 - Prefer structural rules, metadata rails, and thin separators over decorative gradients, oversized pills, or invented hero graphics.
-- Keep the visible left rail limited to `On This Page`; do not reintroduce topic, published, read-time, or author blocks unless the product direction explicitly changes.
+- Keep the visible left rail limited to the back link plus the table of contents; do not reintroduce topic, published, read-time, or author blocks unless the product direction explicitly changes.
 - Treat the left rail as part of the normal page flow, not as a sticky or pinned sidebar.
 - Place the orange article marker in the gap between the left rail and the main content column as a mini separator, and keep the `Article` label plus body copy aligned to the content edge to the right of that separator.
 - Keep the article title to two lines maximum on small screens and balanced, non-truncated reading on larger screens.
@@ -85,7 +85,7 @@ Use only these canonical multi-select topic values in article frontmatter:
 - Create the detail-page route under `research/<slug>/index.html` with any required supporting implementation files.
 - Update the feed-generation path so `Article` is a first-class stream and article entries render first within a day using the standard expandable entry layout.
 - Ensure the day container chrome exposes the `Article` pill when a manual article exists on that day.
-- Render the detail page so the article title becomes the shared header hero, the back link sits in the header row above it, the left rail contains only `On This Page`, and the orange article marker sits between the rail and the body column.
+- Render the detail page so the shared header hero carries the section-level article-page framing, the article title moves into the top of the body column, the back link sits as the lead item in the left rail above the table of contents, and the orange article marker sits between the rail and the body column.
 - Add a root `AGENTS.md` skills section that references `skills/import-blog-post/SKILL.md`.
 - Write the required SEO metadata into the generated detail page.
 - Workflow: [references/step-3-generate-article-and-feed-workflow.md](references/step-3-generate-article-and-feed-workflow.md)
@@ -97,7 +97,7 @@ Use only these canonical multi-select topic values in article frontmatter:
 - Rebuild the feed data and site assets.
 - Verify the feed contains the new `Article` entry on the expected day, that it renders before the standard research items for that day, and that it is expanded by default using the standard entry chrome.
 - Verify the detail-page route resolves and the article content renders correctly.
-- Verify the detail page uses the shared header hero with the back-link row above it, that the left rail contains only `On This Page`, and that the rail scrolls with the article instead of pinning.
+- Verify the detail page uses the section-level shared header hero, that the article title sits at the top of the body column, that the left rail starts with the back link above the table of contents, and that the rail scrolls with the article instead of pinning.
 - Verify the orange article marker sits in the inter-column gap and that the `Article` label and body text start on the same left edge.
 - Verify the detail page includes the required SEO metadata.
 - Run browser-based functional and visual checks with `playwright-interactive` against the feed item, the article pill treatment, the shared site header, the detail page, and a mobile viewport.

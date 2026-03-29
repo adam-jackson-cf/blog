@@ -12,7 +12,7 @@ Create the repo artifacts needed for a canonical `Article` entry, its detail pag
 4. Create the detail-page route and supporting implementation files.
 5. Update feed wiring so `Article` is a first-class stream using the standard expandable entry layout.
 6. Ensure `Article` appears as the day pill type when present and orders before standard research items.
-7. Render the detail page with the back-link row above the shared-header hero title, a non-sticky `On This Page` rail only, and the orange article marker centered in the gap between rail and content.
+7. Render the detail page with a section-level shared-header hero, the article title at the top of the body column, a non-sticky left rail whose lead item is the back link above the table of contents, and the orange article marker centered in the gap between rail and content.
 8. Add root `AGENTS.md` registration for the local skill.
 9. Write the canonical SEO metadata into the detail page.
 

@@ -9,7 +9,7 @@ Confirm the new `Article` entry is visible, ordered correctly, routed correctly,
 1. Rebuild data and assets.
 2. Verify the feed entry is present on the correct day.
 3. Verify the `Article` entry orders before the standard research items for that day and is expanded by default using the standard entry chrome.
-4. Verify the detail-page route, shared site header, `On This Page` rail, and article rendering.
+4. Verify the detail-page route, section-level shared site header, in-body article title, left-rail back link plus table of contents, and article rendering.
 5. Verify title, meta description, canonical URL, and Open Graph basics are present on the detail page.
 6. Verify imported media renders correctly when present.
 7. Verify the back link sits above the hero title, the TOC rail scrolls with the page, and the orange article marker sits in the inter-column gap with the label and body text aligned to the same content edge.

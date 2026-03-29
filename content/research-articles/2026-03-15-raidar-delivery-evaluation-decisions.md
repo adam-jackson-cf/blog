@@ -31,6 +31,10 @@ The core unit is not just a prompt or a benchmark item. It's a **delivery scenar
 
 That distinction matters more than it sounds.
 
+![RAIDAR GitHub repository overview](./assets/raidar-delivery-evaluation-decisions/raidar-github-preview.jpg)
+
+The repository is here: [adam-jackson-cf/raidar](https://github.com/adam-jackson-cf/raidar).
+
 ## Why I think this framing matters
 
 If you're evaluating real project work, the model is only part of the behaviour.

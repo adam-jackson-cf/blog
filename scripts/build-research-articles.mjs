@@ -23,32 +23,33 @@ function renderArticlePage(article) {
   const articleTags = article.topics
     .map((topic) => `<meta property="article:tag" content="${escapeHtml(topic)}" />`)
     .join("\n    ");
-  const tocMarkup =
-    article.headings.length > 0
-      ? `<nav class="article-toc" aria-label="Table of contents">
-          <p class="article-meta-label">On This Page</p>
-          <ol class="article-toc-list">
-            ${article.headings
-              .map(
-                (heading, index) => `
-                  <li class="article-toc-item article-toc-level-${heading.level}">
-                    <a href="#${heading.id}"><span class="article-toc-index">${String(index + 1).padStart(2, "0")}</span>${escapeHtml(heading.text)}</a>
-                  </li>
-                `,
-              )
-              .join("")}
-          </ol>
-        </nav>`
-      : "";
+  const tocItems = article.headings
+    .map(
+      (heading, index) => `
+        <li class="article-toc-item article-toc-level-${heading.level}">
+          <a href="#${heading.id}"><span class="article-toc-index">${String(index + 1).padStart(2, "0")}</span>${escapeHtml(heading.text)}</a>
+        </li>
+      `,
+    )
+    .join("");
+  const tocMarkup = `
+    <div class="article-rail-head">
+      <a class="article-page-back-link" href="../../">Back to feed</a>
+    </div>
+    ${
+      tocItems
+        ? `<nav class="article-toc" aria-label="Table of contents">
+            <ol class="article-toc-list">
+              ${tocItems}
+            </ol>
+          </nav>`
+        : ""
+    }
+  `;
   const shell = renderPageShell({
-    railBrand: article.title,
+    railBrand: "Research Feed: Original Articles | Commentary",
     railChip: "Adam Jackson Blog",
-    headerDetail: `
-      <div class="article-page-back-row">
-        <a class="article-page-back-link" href="../../">Back to feed</a>
-      </div>
-    `,
-    navActive: "feed",
+    navActive: "article-detail",
     siteRoot: "../../",
     mainContent: `
       <section class="article-shell">
@@ -61,6 +62,7 @@ function renderArticlePage(article) {
               <div class="article-summary-band">
                 <p class="article-summary-label"><span class="article-kicker-dot" aria-hidden="true"></span>Article</p>
               </div>
+              <h1 class="article-body-title">${escapeHtml(article.title)}</h1>
             </header>
             <div class="article-content">
               ${article.bodyHtml}
