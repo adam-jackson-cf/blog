@@ -7,6 +7,8 @@ import {
 } from "./ui.js";
 
 const PAGE_SIZE = 7;
+const SHORT_MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const SEARCH_TOOLTIP = "Tab to search. Press Enter to apply the filter. Press Esc to reset.";
 const app = document.querySelector("#app");
 
 const feed = window.__DAILY_SUMMARY_FEED__;
@@ -33,7 +35,8 @@ function createBlog(root, days) {
       formId: "feed-search-form",
       inputId: "feed-search-input",
       buttonLabel: "Filter",
-      placeholder: "Search title",
+      placeholder: "Tab to search",
+      tooltip: SEARCH_TOOLTIP,
     },
     navActive: "feed",
     siteRoot: "./",
@@ -78,6 +81,20 @@ function createBlog(root, days) {
   searchInput?.addEventListener("search", () => {
     const nextValue = searchInput.value.trim();
     if (!nextValue && titleQuery) {
+      titleQuery = "";
+      visibleDays = PAGE_SIZE;
+      render();
+    }
+  });
+
+  searchInput?.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    event.preventDefault();
+    if (searchInput.value || titleQuery) {
+      searchInput.value = "";
       titleQuery = "";
       visibleDays = PAGE_SIZE;
       render();
@@ -174,7 +191,7 @@ function renderDay(day, { isLatestPopulatedDay = false, openEntries } = {}) {
             ? `<div class="day-entries day-entries-collapsed${isLatestPopulatedDay ? " day-entries-latest" : ""}">
                 <div class="day-entries-chrome">
                   <span class="day-entries-dot" aria-hidden="true"></span>
-                  <p class="day-entries-label">${escapeHtml(formatDayChromeLabel(day))}</p>
+                  ${renderDayChromeSources(day)}
                 </div>
                 <div class="entry-grid">
                   ${day.items
@@ -197,9 +214,22 @@ function renderDay(day, { isLatestPopulatedDay = false, openEntries } = {}) {
   `;
 }
 
-function formatDayChromeLabel(day) {
+function renderDayChromeSources(day) {
+  const sourceLabels = getDaySourceLabels(day);
+  if (sourceLabels.length === 0) {
+    return `<p class="day-entries-label">Selected items</p>`;
+  }
+
+  return `
+    <div class="day-source-badges" aria-label="Sources present for ${escapeHtml(formatDayStamp(day.date))}">
+      ${sourceLabels.map((label) => `<span class="day-source-chip">${escapeHtml(label)}</span>`).join("")}
+    </div>
+  `;
+}
+
+function getDaySourceLabels(day) {
   if (!Array.isArray(day?.sources) || day.sources.length === 0) {
-    return "Selected items";
+    return [];
   }
 
   return day.sources
@@ -213,13 +243,17 @@ function formatDayChromeLabel(day) {
       }
       return label.replace(/\s+summary$/i, "") || "Source";
     })
-    .join(" / ");
+    .filter(Boolean);
 }
 
 function formatDayStamp(value) {
-  const date = new Date(`${value}T00:00:00`);
-  const year = String(date.getFullYear()).slice(-2);
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}.${month}.${day}`;
+  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) {
+    return value;
+  }
+
+  const [, year, month, day] = match;
+  const monthLabel = SHORT_MONTH_LABELS[Number(month) - 1];
+
+  return monthLabel ? `${day} ${monthLabel} ${year}` : value;
 }

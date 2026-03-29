@@ -64,11 +64,12 @@ function renderRailSearch(config) {
     inputId = "rail-search-input",
     buttonLabel = "Search",
     placeholder = "Search article titles",
+    tooltip = "",
     value = "",
   } = config;
 
   return `
-    <form class="page-rail-search" id="${escapeAttribute(formId)}" role="search">
+    <form class="page-rail-search" id="${escapeAttribute(formId)}" role="search" title="${escapeAttribute(tooltip)}">
       <label class="sr-only" for="${escapeAttribute(inputId)}">Search article titles</label>
       <input
         class="page-rail-search-input"
@@ -77,10 +78,11 @@ function renderRailSearch(config) {
         type="search"
         value="${escapeAttribute(value)}"
         placeholder="${escapeAttribute(placeholder)}"
+        title="${escapeAttribute(tooltip)}"
         autocomplete="off"
         spellcheck="false"
       />
-      <button class="page-rail-search-button" type="submit">${escapeHtml(buttonLabel)}</button>
+      <button class="page-rail-search-button" type="submit" title="${escapeAttribute(tooltip)}">${escapeHtml(buttonLabel)}</button>
     </form>
   `;
 }
