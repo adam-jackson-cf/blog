@@ -7,6 +7,16 @@ import {
 } from "./ui.js";
 
 const app = document.querySelector("#app");
+const PRACTICE_SIGNAL_ICONS = [
+  "target",
+  "spark",
+  "shield",
+  "workflow",
+  "compass",
+  "search",
+  "gauge",
+  "bridge",
+];
 
 const PRACTICES = [
   {
@@ -133,8 +143,7 @@ function createAppliedAiPage(root, items) {
 
   root.innerHTML = renderPageShell({
     railBrand: "Applied AI: Learnings in Enterprise",
-    railChip: "Reference list",
-    railNote: `${items.length} practices`,
+    railChip: "Adam Jackson Blog",
     navActive: "applied-ai",
     siteRoot: "../",
     mainContent: `
@@ -142,7 +151,7 @@ function createAppliedAiPage(root, items) {
         <div class="day-entries day-entries-latest practice-panel">
           <div class="day-entries-chrome">
             <span class="day-entries-dot" aria-hidden="true"></span>
-            <p class="day-entries-label">AI SDLC / Applied AI</p>
+            <p class="day-entries-label">Agentic Engineering / AI SDLC</p>
           </div>
           <div id="practice-list" class="entry-grid"></div>
         </div>
@@ -174,17 +183,54 @@ function createAppliedAiPage(root, items) {
 
 function renderPracticeBody(definition, points) {
   return `
-    <div class="practice-detail-grid">
-      <div class="practice-detail-column">
-        <p class="practice-detail-label">Definition</p>
-        <p class="entry-copy">${escapeHtml(definition)}</p>
+    <div class="practice-detail-stack">
+      <div class="practice-definition">
+        <p class="entry-copy practice-definition-copy">${escapeHtml(definition)}</p>
       </div>
-      <div class="practice-detail-column">
-        <p class="practice-detail-label">What “good” looks like</p>
-        <ul class="entry-points">
-          ${points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
+      <div class="practice-section-rule" aria-hidden="true"></div>
+      <section class="practice-good-section">
+        <div class="practice-good-heading">
+          <span class="practice-good-heading-dot" aria-hidden="true"></span>
+          <p class="practice-detail-label practice-good-heading-label">What “Good” Looks Like</p>
+        </div>
+        <ul class="practice-signal-list">
+          ${points
+            .map(
+              (point, index) => `
+                <li class="practice-signal-item">
+                  <span class="practice-signal-icon" aria-hidden="true">${renderPracticeSignalIcon(index)}</span>
+                  <span class="practice-signal-copy">${escapeHtml(point)}</span>
+                </li>
+              `,
+            )
+            .join("")}
         </ul>
-      </div>
+      </section>
     </div>
   `;
+}
+
+function renderPracticeSignalIcon(index) {
+  const iconName = PRACTICE_SIGNAL_ICONS[index % PRACTICE_SIGNAL_ICONS.length];
+
+  switch (iconName) {
+    case "target":
+      return `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3"></circle><path d="M12 4V2M20 12h2M12 20v2M4 12H2"></path></svg>`;
+    case "spark":
+      return `<svg viewBox="0 0 24 24" fill="none"><path d="M12 3 13.8 8.2 19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"></path><path d="M18 3v4M20 5h-4M5 16v3M6.5 17.5h-3"></path></svg>`;
+    case "shield":
+      return `<svg viewBox="0 0 24 24" fill="none"><path d="M12 3 18 5.5V11c0 4-2.2 7-6 9-3.8-2-6-5-6-9V5.5L12 3Z"></path><path d="m9.5 12 1.7 1.8 3.5-4"></path></svg>`;
+    case "workflow":
+      return `<svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4" width="5" height="5" rx="1"></rect><rect x="15.5" y="4" width="5" height="5" rx="1"></rect><rect x="9.5" y="15" width="5" height="5" rx="1"></rect><path d="M8.5 6.5h7M12 9.5V15"></path></svg>`;
+    case "compass":
+      return `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5"></circle><path d="m14.8 9.2-1.8 5.4-5.4 1.8 1.8-5.4 5.4-1.8Z"></path></svg>`;
+    case "search":
+      return `<svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path><path d="M11 8.5v5M8.5 11H13.5"></path></svg>`;
+    case "gauge":
+      return `<svg viewBox="0 0 24 24" fill="none"><path d="M5 16a7 7 0 1 1 14 0"></path><path d="M12 12 15.5 8.5"></path><path d="M8 18h8"></path></svg>`;
+    case "bridge":
+      return `<svg viewBox="0 0 24 24" fill="none"><path d="M3 18h18"></path><path d="M5 18v-3.5M19 18v-3.5"></path><path d="M7.5 18v-5c1.1-1 2.6-1.5 4.5-1.5s3.4.5 4.5 1.5v5"></path><path d="M9.5 9.5 12 6l2.5 3.5"></path></svg>`;
+    default:
+      return `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8"></circle></svg>`;
+  }
 }

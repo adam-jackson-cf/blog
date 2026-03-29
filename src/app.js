@@ -1,7 +1,6 @@
 import {
   bindEntryToggles,
   escapeHtml,
-  formatGeneratedAt,
   renderCollapsibleEntry,
   renderEmptyState,
   renderPageShell,
@@ -25,12 +24,17 @@ if (!feed || !Array.isArray(feed.days)) {
 function createBlog(root, days) {
   let visibleDays = Math.min(PAGE_SIZE, days.length);
   const openEntries = new Set();
-  const generatedLabel = formatGeneratedAt(feed?.generatedAt);
+  let titleQuery = "";
 
   root.innerHTML = renderPageShell({
+    railChip: "Adam Jackson Blog",
     railBrand: "Research Feed: AI Native | Agentics | Devex",
-    railChip: "Static feed",
-    railNote: generatedLabel,
+    railSearch: {
+      formId: "feed-search-form",
+      inputId: "feed-search-input",
+      buttonLabel: "Filter",
+      placeholder: "Search title",
+    },
     navActive: "feed",
     siteRoot: "./",
     mainContent: `
@@ -43,25 +47,78 @@ function createBlog(root, days) {
   const dayFeed = root.querySelector("#day-feed");
   const sentinel = root.querySelector("#feed-sentinel");
   const footer = root.querySelector("#feed-footer");
+  const searchForm = root.querySelector("#feed-search-form");
+  const searchInput = root.querySelector("#feed-search-input");
+  const railMeta = root.querySelector(".page-rail-meta");
+  const searchAside = root.querySelector(".page-intro-aside");
 
   bindEntryToggles(dayFeed, openEntries, render);
 
+  if (railMeta && searchAside) {
+    const syncSearchAsideWidth = () => {
+      searchAside.style.width = `${Math.ceil(railMeta.getBoundingClientRect().width)}px`;
+    };
+
+    syncSearchAsideWidth();
+    window.addEventListener("resize", syncSearchAsideWidth);
+
+    if (typeof ResizeObserver !== "undefined") {
+      const resizeObserver = new ResizeObserver(syncSearchAsideWidth);
+      resizeObserver.observe(railMeta);
+    }
+  }
+
+  searchForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    titleQuery = searchInput?.value.trim() ?? "";
+    visibleDays = PAGE_SIZE;
+    render();
+  });
+
+  searchInput?.addEventListener("search", () => {
+    const nextValue = searchInput.value.trim();
+    if (!nextValue && titleQuery) {
+      titleQuery = "";
+      visibleDays = PAGE_SIZE;
+      render();
+    }
+  });
+
   function render() {
-    const visibleFeedDays = days.slice(0, visibleDays);
+    const normalizedQuery = titleQuery.toLowerCase();
+    const groupedDays = normalizedQuery
+      ? days
+          .map((day, sourceDayIndex) => ({
+            ...day,
+            sourceDayIndex,
+            items: day.items.filter((item) => item.title.toLowerCase().includes(normalizedQuery)),
+          }))
+          .filter((day) => day.items.length > 0)
+      : days.map((day, sourceDayIndex) => ({
+          ...day,
+          sourceDayIndex,
+        }));
+
+    const visibleFeedDays = groupedDays.slice(0, visibleDays);
+
     const firstPopulatedDayIndex = visibleFeedDays.findIndex((day) => day.items.length > 0);
 
-    dayFeed.innerHTML = visibleFeedDays
-      .map((day, index) =>
-        renderDay(day, {
-          dayIndex: index,
-          isLatestPopulatedDay: index === firstPopulatedDayIndex,
-          openEntries,
-        }),
-      )
-      .join("");
+    dayFeed.innerHTML = visibleFeedDays.length
+      ? visibleFeedDays
+          .map((day, index) =>
+            renderDay(day, {
+              isLatestPopulatedDay: index === firstPopulatedDayIndex,
+              openEntries,
+            }),
+          )
+          .join("")
+      : renderSearchEmpty(titleQuery);
 
-    footer.innerHTML =
-      visibleDays < days.length
+    footer.innerHTML = normalizedQuery
+      ? visibleDays < groupedDays.length
+        ? `Showing <span class="font-semibold text-foreground">${countItems(visibleFeedDays)}</span> matching items across <span class="font-semibold text-foreground">${visibleFeedDays.length}</span> of <span class="font-semibold text-foreground">${groupedDays.length}</span> days. Scroll for seven more.`
+        : `Showing <span class="font-semibold text-foreground">${countItems(groupedDays)}</span> matching items across <span class="font-semibold text-foreground">${groupedDays.length}</span> days.`
+      : visibleDays < days.length
         ? `Showing <span class="font-semibold text-foreground">${visibleDays}</span> of <span class="font-semibold text-foreground">${days.length}</span> days. Scroll for seven more.`
         : `Showing all <span class="font-semibold text-foreground">${days.length}</span> available days.`;
   }
@@ -74,7 +131,7 @@ function createBlog(root, days) {
 
   const observer = new IntersectionObserver(
     (entries) => {
-      if (!entries[0]?.isIntersecting) {
+      if (!entries[0]?.isIntersecting || titleQuery) {
         return;
       }
 
@@ -91,7 +148,19 @@ function createBlog(root, days) {
   observer.observe(sentinel);
 }
 
-function renderDay(day, { dayIndex = 0, isLatestPopulatedDay = false, openEntries } = {}) {
+function renderSearchEmpty(query) {
+  return `
+    <section class="day-section">
+      <article class="empty-panel">No article titles matched "${escapeHtml(query)}".</article>
+    </section>
+  `;
+}
+
+function countItems(days) {
+  return days.reduce((total, day) => total + day.items.length, 0);
+}
+
+function renderDay(day, { isLatestPopulatedDay = false, openEntries } = {}) {
   const hasItems = day.items.length > 0;
 
   return `
@@ -109,12 +178,15 @@ function renderDay(day, { dayIndex = 0, isLatestPopulatedDay = false, openEntrie
                 </div>
                 <div class="entry-grid">
                   ${day.items
-                    .map((item, itemIndex) =>
+                    .map((item, itemIndex) => {
+                      const entryKey = item.id || `${day.date}:${itemIndex}`;
+                      return (
                       renderCollapsibleEntry(item, {
-                        entryKey: `${day.date}:${dayIndex}:${itemIndex}`,
-                        isExpanded: openEntries?.has(`${day.date}:${dayIndex}:${itemIndex}`),
-                      }),
-                    )
+                        entryKey,
+                        isExpanded: openEntries?.has(entryKey),
+                      })
+                    );
+                    })
                     .join("")}
                 </div>
               </div>`
