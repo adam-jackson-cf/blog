@@ -24,6 +24,7 @@ export function renderPageShell({
   railChip = "",
   railContacts = DEFAULT_RAIL_CONTACTS,
   railSearch = null,
+  headerDetail = "",
   navActive = "feed",
   siteRoot = "./",
   mainContent = "",
@@ -42,7 +43,7 @@ export function renderPageShell({
         </div>
         <header class="page-header">
           <div class="page-chrome-inner page-intro">
-            <div class="page-intro-main">${renderRailBrand(railBrand)}</div>
+            <div class="page-intro-main">${headerDetail || ""}${renderRailBrand(railBrand)}</div>
             ${railSearch ? `<div class="page-intro-aside">${renderRailSearch(railSearch)}</div>` : ""}
           </div>
         </header>
@@ -95,7 +96,8 @@ function renderRailContacts(contacts) {
   const items = contacts
     .map((contact) => {
       const href = typeof contact?.href === "string" ? contact.href.trim() : "";
-      const label = typeof contact?.label === "string" ? contact.label.trim() : "";
+      const label =
+        typeof contact?.label === "string" ? contact.label.trim() : "";
       const icon = typeof contact?.icon === "string" ? contact.icon.trim() : "";
 
       if (!href || !label || !icon) {
@@ -191,7 +193,11 @@ export function renderPrimaryNav(activeKey = "feed", siteRoot = "./") {
   const normalizedRoot = siteRoot.endsWith("/") ? siteRoot : `${siteRoot}/`;
   const items = [
     { key: "feed", label: "Research Feed", href: normalizedRoot },
-    { key: "applied-ai", label: "Applied AI", href: `${normalizedRoot}applied-ai/` },
+    {
+      key: "applied-ai",
+      label: "Applied AI",
+      href: `${normalizedRoot}applied-ai/`,
+    },
   ];
 
   const navItems = items
@@ -219,7 +225,7 @@ export function renderPrimaryNav(activeKey = "feed", siteRoot = "./") {
   `;
 }
 
-export function bindEntryToggles(container, openEntries, render) {
+export function bindEntryToggles(container, entryState, render) {
   container.addEventListener("click", (event) => {
     const button = event.target.closest(".entry-toggle");
     if (!button) {
@@ -231,23 +237,23 @@ export function bindEntryToggles(container, openEntries, render) {
       return;
     }
 
-    if (openEntries.has(key)) {
-      openEntries.delete(key);
-    } else {
-      openEntries.add(key);
-    }
+    entryState.set(key, button.getAttribute("aria-expanded") !== "true");
 
     render();
   });
 }
 
-export function renderCollapsibleEntry(item, { entryKey = "", isExpanded = false } = {}) {
+export function renderCollapsibleEntry(
+  item,
+  { entryKey = "", isExpanded = false } = {},
+) {
   const sourceMarkup = renderSourceLinks(getItemSourceLinks(item));
   const toggleLabel = isExpanded ? "Collapse row" : "Expand row";
   const toggleSymbol = isExpanded ? "&minus;" : "+";
+  const isNote = item?.stream === "note";
 
   return `
-    <article class="entry entry-collapsible${isExpanded ? " is-expanded" : " is-collapsed"}">
+    <article class="entry entry-collapsible${isExpanded ? " is-expanded" : " is-collapsed"}${isNote ? " entry-note" : ""}">
       <button
         class="entry-row entry-toggle"
         type="button"
@@ -255,7 +261,9 @@ export function renderCollapsibleEntry(item, { entryKey = "", isExpanded = false
         aria-label="${toggleLabel}"
         data-entry-key="${escapeAttribute(entryKey)}"
       >
-        <span class="item-title">${escapeHtml(item.title)}</span>
+        <span class="entry-row-main">
+          <span class="item-title">${escapeHtml(item.title)}</span>
+        </span>
         <span class="entry-toggle-icon" aria-hidden="true">${toggleSymbol}</span>
       </button>
       ${
@@ -295,13 +303,53 @@ export function escapeAttribute(value) {
 }
 
 function renderEntryBody(item) {
+  const noteMedia = renderEntryPreview(item);
+  const noteMeta = renderNoteMeta(item);
+
   if (typeof item?.bodyHtml === "string" && item.bodyHtml.trim()) {
-    return `<div class="entry-body">${item.bodyHtml}</div>`;
+    return `<div class="entry-body">${noteMedia}${noteMeta}<div class="entry-rich-copy">${item.bodyHtml}</div></div>`;
   }
 
   return `
     <div class="entry-body">
+      ${noteMedia}
+      ${noteMeta}
       <p class="entry-copy">${escapeHtml(item.summary || "No summary text found for this selected item.")}</p>
+    </div>
+  `;
+}
+
+function renderEntryPreview(item) {
+  if (item?.stream !== "note") {
+    return "";
+  }
+
+  const imageUrl = item.previewImage || item.screenshot;
+  if (!imageUrl) {
+    return "";
+  }
+
+  return `
+    <div class="entry-note-media">
+      <img class="entry-note-image" src="${escapeAttribute(imageUrl)}" alt="${escapeAttribute(item.title || "Research note preview")}" loading="lazy" />
+    </div>
+  `;
+}
+
+function renderNoteMeta(item) {
+  if (item?.stream !== "note") {
+    return "";
+  }
+
+  const sourceLabel = item.sourceDomain || item.sourceTitle || "";
+  if (!sourceLabel && !item.favicon) {
+    return "";
+  }
+
+  return `
+    <div class="entry-note-meta">
+      ${item.favicon ? `<img class="entry-note-favicon" src="${escapeAttribute(item.favicon)}" alt="" loading="lazy" />` : ""}
+      ${sourceLabel ? `<span class="entry-note-meta-copy">${escapeHtml(sourceLabel)}</span>` : ""}
     </div>
   `;
 }
@@ -319,7 +367,8 @@ function renderSourceLinks(links) {
       }
 
       const label = formatSourceLabel(link) || `Source ${index + 1}`;
-      return `<li class="source-list-item"><a class="source-link" href="${href}" target="_blank" rel="noreferrer" aria-label="Open source ${index + 1}">${label}<span aria-hidden="true">↗</span></a></li>`;
+      const isExternal = /^https?:\/\//i.test(href);
+      return `<li class="source-list-item"><a class="source-link" href="${href}"${isExternal ? ' target="_blank" rel="noreferrer"' : ""} aria-label="Open source ${index + 1}">${label}<span aria-hidden="true">↗</span></a></li>`;
     })
     .filter(Boolean);
 
@@ -400,7 +449,9 @@ function normalizeSourceUrl(value) {
     return "";
   }
 
-  const cleaned = String(value).trim().replace(/[)\].,;!?]+$/g, "");
+  const cleaned = String(value)
+    .trim()
+    .replace(/[)\].,;!?]+$/g, "");
   if (/^https?:\/\//i.test(cleaned)) {
     return cleaned;
   }

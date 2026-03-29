@@ -1,10 +1,17 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
-const projectRoot = process.cwd();
-const sourceDir = path.join(projectRoot, "docs", "daily-source-scans");
-const outDir = path.join(projectRoot, "data");
-const outFile = path.join(outDir, "summary-feed.js");
+import { readResearchArticles, slugify } from "./research-article-utils.mjs";
+import { readResearchNotes } from "./research-note-utils.mjs";
+
+const STREAM_PRIORITY = {
+  note: 0,
+  article: 1,
+  "blog-arxiv": 2,
+  xdotcom: 3,
+};
+
 const summaryTargets = [
   {
     key: "blog-arxiv",
@@ -22,54 +29,176 @@ const summaryTargets = [
   },
 ];
 
-const matchedFiles = (await readdir(sourceDir))
-  .flatMap((fileName) => {
-    const target = summaryTargets.find(({ filePattern }) => filePattern.test(fileName));
-    if (!target) {
-      return [];
-    }
+export async function buildSummaryFeed({ projectRoot = process.cwd() } = {}) {
+  const sourceDir = path.join(projectRoot, "docs", "daily-source-scans");
+  const articleDir = path.join(projectRoot, "content", "research-articles");
+  const noteDir = path.join(projectRoot, "content", "research-notes");
+  const outDir = path.join(projectRoot, "data");
+  const outFile = path.join(outDir, "summary-feed.js");
+  const daysByDate = new Map();
 
-    const date = fileName.match(target.filePattern)?.[1];
-    return date ? [{ date, fileName, target }] : [];
-  })
-  .sort((a, b) => b.date.localeCompare(a.date) || a.fileName.localeCompare(b.fileName));
+  for (const { date, fileName, target } of await readMatchedSummaryFiles(
+    sourceDir,
+  )) {
+    const markdown = await readFile(path.join(sourceDir, fileName), "utf8");
+    const summary = parseSummary(date, fileName, target, markdown);
+    mergeSummary(daysByDate, summary);
+  }
 
-const daysByDate = new Map();
+  for (const note of await readResearchNotes(noteDir)) {
+    mergeSummary(daysByDate, {
+      date: note.date,
+      title: `Daily Source Summary - ${note.date}`,
+      coverageNotes: [],
+      items: [
+        {
+          id: note.noteId,
+          title: note.title,
+          summary: note.summary,
+          bodyHtml: note.bodyHtml,
+          sourceLinks: note.sourceLinks,
+          sourceUrl: note.sourceUrl,
+          sourceTitle: note.sourceTitle,
+          sourceDomain: note.sourceDomain,
+          previewImage: note.previewImage,
+          screenshot: note.screenshot,
+          favicon: note.favicon,
+          capturedAt: note.capturedAt,
+          stream: "note",
+          streamLabel: "Research note",
+        },
+      ],
+      sourceFiles: [
+        {
+          key: "note",
+          label: "Research note",
+          fileName: path.relative(projectRoot, note.filePath),
+          title: note.title,
+        },
+      ],
+    });
+  }
 
-for (const { date, fileName, target } of matchedFiles) {
-  const markdown = await readFile(path.join(sourceDir, fileName), "utf8");
-  const summary = parseSummary(date, fileName, target, markdown);
-  mergeSummary(daysByDate, summary);
+  for (const article of await readResearchArticles(articleDir)) {
+    mergeSummary(daysByDate, {
+      date: article.date,
+      title: `Daily Source Summary - ${article.date}`,
+      coverageNotes: [],
+      items: [
+        {
+          id: `${article.date}-article-${slugify(article.slug)}`,
+          title: article.title,
+          summary: article.summary,
+          sourceLinks: [
+            {
+              label: "Article detail",
+              url: article.routeHref,
+            },
+          ],
+          stream: "article",
+          streamLabel: "Article",
+          href: article.routeHref,
+        },
+      ],
+      sourceFiles: [
+        {
+          key: "article",
+          label: "Article",
+          fileName: article.fileName,
+          title: article.title,
+        },
+      ],
+    });
+  }
+
+  const days = Array.from(daysByDate.values())
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .map(finalizeDay);
+
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    days,
+  };
+
+  await mkdir(outDir, { recursive: true });
+  await writeFile(
+    outFile,
+    `window.__DAILY_SUMMARY_FEED__ = ${JSON.stringify(payload, null, 2)};\n`,
+    "utf8",
+  );
+
+  return { outFile, payload };
 }
 
-const days = Array.from(daysByDate.values())
-  .sort((a, b) => b.date.localeCompare(a.date))
-  .map(finalizeDay);
+async function readMatchedSummaryFiles(sourceDir) {
+  let fileNames = [];
 
-await mkdir(outDir, { recursive: true });
-await writeFile(
-  outFile,
-  `window.__DAILY_SUMMARY_FEED__ = ${JSON.stringify({ generatedAt: new Date().toISOString(), days }, null, 2)};\n`,
-  "utf8",
-);
+  try {
+    fileNames = await readdir(sourceDir);
+  } catch (error) {
+    if (error && error.code === "ENOENT") {
+      return [];
+    }
+    throw error;
+  }
+
+  return fileNames
+    .flatMap((fileName) => {
+      const target = summaryTargets.find(({ filePattern }) =>
+        filePattern.test(fileName),
+      );
+      if (!target) {
+        return [];
+      }
+
+      const date = fileName.match(target.filePattern)?.[1];
+      return date ? [{ date, fileName, target }] : [];
+    })
+    .sort(
+      (a, b) =>
+        b.date.localeCompare(a.date) || a.fileName.localeCompare(b.fileName),
+    );
+}
 
 function parseSummary(date, fileName, target, markdown) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
-  const title = lines.find((line) => line.startsWith("# "))?.replace(/^#\s+/, "").trim() ?? date;
+  const title =
+    lines
+      .find((line) => line.startsWith("# "))
+      ?.replace(/^#\s+/, "")
+      .trim() ?? date;
+
   if (title !== target.expectedTitle(date)) {
-    throw new Error(`Unexpected summary title format in ${date} (${target.key}): "${title}"`);
+    throw new Error(
+      `Unexpected summary title format in ${date} (${target.key}): "${title}"`,
+    );
   }
+
   const coverageDetail =
-    lines.find((line) => line.startsWith(target.coveragePrefix))?.replace(target.coveragePrefix, "").trim() ?? "";
-  const selectedHeadingIndex = lines.findIndex((line) => line.trim() === "## Selected items");
-  const nextHeadingIndex = lines.findIndex((line, index) => index > selectedHeadingIndex && line.startsWith("## "));
+    lines
+      .find((line) => line.startsWith(target.coveragePrefix))
+      ?.replace(target.coveragePrefix, "")
+      .trim() ?? "";
+  const selectedHeadingIndex = lines.findIndex(
+    (line) => line.trim() === "## Selected items",
+  );
+  const nextHeadingIndex = lines.findIndex(
+    (line, index) => index > selectedHeadingIndex && line.startsWith("## "),
+  );
   const selectedSection =
-    selectedHeadingIndex === -1 ? [] : lines.slice(selectedHeadingIndex + 1, nextHeadingIndex === -1 ? lines.length : nextHeadingIndex);
+    selectedHeadingIndex === -1
+      ? []
+      : lines.slice(
+          selectedHeadingIndex + 1,
+          nextHeadingIndex === -1 ? lines.length : nextHeadingIndex,
+        );
 
   return {
     date,
     title: `Daily Source Summary - ${date}`,
-    coverageNotes: coverageDetail ? [`${target.label}: ${coverageDetail.replace(/\.$/, "")}`] : [],
+    coverageNotes: coverageDetail
+      ? [`${target.label}: ${coverageDetail.replace(/\.$/, "")}`]
+      : [],
     items: parseItems(date, target, selectedSection),
     sourceFiles: [
       {
@@ -99,8 +228,8 @@ function finalizeDay(day) {
     date: day.date,
     title: day.title,
     coverageWindow: day.coverageNotes.join(" | "),
-    items: day.items,
-    sources: day.sourceFiles,
+    items: [...day.items].sort(compareEntries),
+    sources: [...day.sourceFiles].sort(compareSources),
   };
 }
 
@@ -142,13 +271,19 @@ function parseItems(date, target, lines) {
 
     const sourceMatch = line.match(/^- Sources?:\s*(.+)$/);
     if (sourceMatch) {
-      current.sourceLinks = parseSourceLinks(sourceMatch[1].trim(), current.sourceLinks);
+      current.sourceLinks = parseSourceLinks(
+        sourceMatch[1].trim(),
+        current.sourceLinks,
+      );
       continue;
     }
 
     const inlineSourceMatch = line.match(/\bSource:\s*(.+)$/);
     if (inlineSourceMatch) {
-      current.sourceLinks = parseSourceLinks(inlineSourceMatch[1].trim(), current.sourceLinks);
+      current.sourceLinks = parseSourceLinks(
+        inlineSourceMatch[1].trim(),
+        current.sourceLinks,
+      );
     }
   }
 
@@ -159,13 +294,6 @@ function parseItems(date, target, lines) {
   return items;
 }
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 function parseSourceLinks(value, existing = []) {
   const links = [...existing];
 
@@ -174,12 +302,18 @@ function parseSourceLinks(value, existing = []) {
   }
 
   const add = (parsed) => {
-    if (parsed && parsed.url && !links.some((entry) => entry.url === parsed.url)) {
+    if (
+      parsed &&
+      parsed.url &&
+      !links.some((entry) => entry.url === parsed.url)
+    ) {
       links.push(parsed);
     }
   };
 
-  const markdownMatches = Array.from(value.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g));
+  const markdownMatches = Array.from(
+    value.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g),
+  );
   for (const match of markdownMatches) {
     add({ label: match[1].trim(), url: normalizeSourceUrl(match[2]) });
   }
@@ -192,7 +326,8 @@ function parseSourceLinks(value, existing = []) {
     add({ label: normalized || rawUrl, url: normalized });
   }
 
-  const domainMatches = stripped.match(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s,;]*)?/gi) ?? [];
+  const domainMatches =
+    stripped.match(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s,;]*)?/gi) ?? [];
   for (const rawDomain of domainMatches) {
     if (/^https?:\/\//i.test(rawDomain)) {
       continue;
@@ -201,13 +336,34 @@ function parseSourceLinks(value, existing = []) {
     add({ label: rawDomain.trim(), url: normalized });
   }
 
-  const handleMatches = Array.from(stripped.matchAll(/(^|[\s,;])@([a-z0-9_]{1,15})\b/gi));
+  const handleMatches = Array.from(
+    stripped.matchAll(/(^|[\s,;])@([a-z0-9_]{1,15})\b/gi),
+  );
   for (const match of handleMatches) {
     const handle = match[2];
     add({ label: `@${handle}`, url: `https://x.com/${handle}` });
   }
 
   return links;
+}
+
+function compareEntries(a, b) {
+  return (
+    getStreamPriority(a?.stream) - getStreamPriority(b?.stream) ||
+    String(b?.capturedAt || "").localeCompare(String(a?.capturedAt || "")) ||
+    String(a?.title || "").localeCompare(String(b?.title || ""))
+  );
+}
+
+function compareSources(a, b) {
+  return (
+    getStreamPriority(a?.key) - getStreamPriority(b?.key) ||
+    String(a?.label || "").localeCompare(String(b?.label || ""))
+  );
+}
+
+function getStreamPriority(key) {
+  return STREAM_PRIORITY[key] ?? 99;
 }
 
 function normalizeSourceUrl(value) {
@@ -226,4 +382,11 @@ function normalizeSourceUrl(value) {
   }
 
   return "";
+}
+
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  await buildSummaryFeed();
 }

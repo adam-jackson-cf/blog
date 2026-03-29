@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Research Note Capture",
+  "description": "Capture the current page into the local blog research feed.",
+  "version": "0.1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Capture research note"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "permissions": ["storage", "tabs", "activeTab", "scripting", "contextMenus"],
+  "host_permissions": ["http://127.0.0.1:4177/*", "http://localhost:4177/*"],
+  "commands": {
+    "capture-research-note": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description": "Capture a research note from the current page."
+    }
+  }
+}

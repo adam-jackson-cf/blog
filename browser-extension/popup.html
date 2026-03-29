@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Capture research note</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="popup">
+    <main class="shell">
+      <section class="panel">
+        <div class="header">
+          <div class="header-main">
+            <h1 class="title">Capture research note</h1>
+            <p class="subtitle">
+              Page metadata is pulled in automatically so you can save
+              immediately or tighten the note first.
+            </p>
+          </div>
+          <a
+            class="link-button"
+            href="./options.html"
+            target="_blank"
+            rel="noreferrer"
+            >Settings</a
+          >
+        </div>
+        <p class="status" id="service-status">
+          Checking local capture service…
+        </p>
+        <ul class="meta-list" id="capture-meta" hidden>
+          <li class="meta-row">
+            <span class="meta-label">Page</span>
+            <span class="meta-value" id="page-title"></span>
+          </li>
+          <li class="meta-row">
+            <span class="meta-label">Source</span>
+            <span class="meta-value" id="page-source"></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <form class="capture-form" id="capture-form">
+          <div class="field">
+            <label class="field-label" for="title">Title</label>
+            <input
+              class="input"
+              id="title"
+              name="title"
+              type="text"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="summary">Summary</label>
+            <textarea
+              class="textarea"
+              id="summary"
+              name="summary"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="body">Note</label>
+            <textarea
+              class="textarea"
+              id="body"
+              name="body"
+              rows="8"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="source-url">Source URL</label>
+            <input class="input" id="source-url" name="sourceUrl" type="url" />
+          </div>
+
+          <p class="hint">
+            The note body is prefilled from selected text when available. The
+            service stores the normalized note in this repo and rebuilds the
+            feed immediately.
+          </p>
+
+          <div class="capture-preview" id="capture-preview" hidden>
+            <span class="field-label">Screenshot</span>
+            <div class="capture-image-wrap">
+              <img
+                class="capture-image"
+                id="capture-image"
+                alt="Current page screenshot"
+              />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              class="button button-primary"
+              id="save-button"
+              type="submit"
+            >
+              Save note
+            </button>
+            <button class="button" id="refresh-button" type="button">
+              Refresh capture
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel" id="saved-panel" hidden>
+        <div class="header-main">
+          <h2 class="title">Saved note</h2>
+          <p class="subtitle">
+            The note is now part of the local research feed.
+          </p>
+        </div>
+        <dl class="saved-list" id="saved-list"></dl>
+      </section>
+
+      <p class="status" id="message" hidden></p>
+    </main>
+
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

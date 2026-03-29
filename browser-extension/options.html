@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Research note settings</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="options">
+    <main class="shell">
+      <section class="panel">
+        <div class="header">
+          <div class="header-main">
+            <h1 class="title">Research note settings</h1>
+            <p class="subtitle">
+              Point the extension at the local Bun capture service running in
+              this repo.
+            </p>
+          </div>
+          <a class="link-button" href="./popup.html">Capture</a>
+        </div>
+        <form class="settings-form" id="settings-form">
+          <div class="field">
+            <label class="field-label" for="service-url">Service URL</label>
+            <input
+              class="input"
+              id="service-url"
+              name="serviceUrl"
+              type="url"
+            />
+          </div>
+          <div class="actions">
+            <button class="button button-primary" type="submit">
+              Save settings
+            </button>
+            <button class="button" id="health-button" type="button">
+              Check service
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <p class="status" id="settings-status">No health check run yet.</p>
+    </main>
+
+    <script type="module" src="./options.js"></script>
+  </body>
+</html>

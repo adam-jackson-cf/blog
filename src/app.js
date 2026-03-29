@@ -7,8 +7,22 @@ import {
 } from "./ui.js";
 
 const PAGE_SIZE = 7;
-const SHORT_MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const SEARCH_TOOLTIP = "Tab to search. Press Enter to apply the filter. Press Esc to reset.";
+const SHORT_MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const SEARCH_TOOLTIP =
+  "Tab to search. Press Enter to apply the filter. Press Esc to reset.";
 const app = document.querySelector("#app");
 
 const feed = window.__DAILY_SUMMARY_FEED__;
@@ -18,14 +32,16 @@ if (!app) {
 }
 
 if (!feed || !Array.isArray(feed.days)) {
-  app.innerHTML = renderEmptyState("Summary feed not found. Run `bun run build` to generate the page data.");
+  app.innerHTML = renderEmptyState(
+    "Summary feed not found. Run `bun run build` to generate the page data.",
+  );
 } else {
   createBlog(app, feed.days);
 }
 
 function createBlog(root, days) {
   let visibleDays = Math.min(PAGE_SIZE, days.length);
-  const openEntries = new Set();
+  const entryState = new Map();
   let titleQuery = "";
 
   root.innerHTML = renderPageShell({
@@ -55,7 +71,7 @@ function createBlog(root, days) {
   const railMeta = root.querySelector(".page-rail-meta");
   const searchAside = root.querySelector(".page-intro-aside");
 
-  bindEntryToggles(dayFeed, openEntries, render);
+  bindEntryToggles(dayFeed, entryState, render);
 
   if (railMeta && searchAside) {
     const syncSearchAsideWidth = () => {
@@ -108,7 +124,9 @@ function createBlog(root, days) {
           .map((day, sourceDayIndex) => ({
             ...day,
             sourceDayIndex,
-            items: day.items.filter((item) => item.title.toLowerCase().includes(normalizedQuery)),
+            items: day.items.filter((item) =>
+              item.title.toLowerCase().includes(normalizedQuery),
+            ),
           }))
           .filter((day) => day.items.length > 0)
       : days.map((day, sourceDayIndex) => ({
@@ -118,14 +136,16 @@ function createBlog(root, days) {
 
     const visibleFeedDays = groupedDays.slice(0, visibleDays);
 
-    const firstPopulatedDayIndex = visibleFeedDays.findIndex((day) => day.items.length > 0);
+    const firstPopulatedDayIndex = visibleFeedDays.findIndex(
+      (day) => day.items.length > 0,
+    );
 
     dayFeed.innerHTML = visibleFeedDays.length
       ? visibleFeedDays
           .map((day, index) =>
             renderDay(day, {
               isLatestPopulatedDay: index === firstPopulatedDayIndex,
-              openEntries,
+              entryState,
             }),
           )
           .join("")
@@ -177,7 +197,7 @@ function countItems(days) {
   return days.reduce((total, day) => total + day.items.length, 0);
 }
 
-function renderDay(day, { isLatestPopulatedDay = false, openEntries } = {}) {
+function renderDay(day, { isLatestPopulatedDay = false, entryState } = {}) {
   const hasItems = day.items.length > 0;
 
   return `
@@ -194,17 +214,20 @@ function renderDay(day, { isLatestPopulatedDay = false, openEntries } = {}) {
                   ${renderDayChromeSources(day)}
                 </div>
                 <div class="entry-grid">
-                  ${day.items
-                    .map((item, itemIndex) => {
-                      const entryKey = item.id || `${day.date}:${itemIndex}`;
-                      return (
-                      renderCollapsibleEntry(item, {
-                        entryKey,
-                        isExpanded: openEntries?.has(entryKey),
-                      })
-                    );
-                    })
-                    .join("")}
+              ${day.items
+                .map((item, itemIndex) => {
+                  const entryKey = item.id || `${day.date}:${itemIndex}`;
+                  const defaultExpanded = item.stream === "article";
+                  const isExpanded = entryState?.has(entryKey)
+                    ? entryState.get(entryKey)
+                    : defaultExpanded;
+
+                  return renderCollapsibleEntry(item, {
+                    entryKey,
+                    isExpanded,
+                  });
+                })
+                .join("")}
                 </div>
               </div>`
             : `<article class="empty-panel">No selected items were published into this summary.</article>`
@@ -232,9 +255,13 @@ function getDaySourceLabels(day) {
     return [];
   }
 
-  return day.sources
+  const labels = day.sources
     .map((source) => {
-      const label = typeof source?.label === "string" ? source.label.trim() : "";
+      const label =
+        typeof source?.label === "string" ? source.label.trim() : "";
+      if (/research note/i.test(label)) {
+        return "Notes";
+      }
       if (/blog and arxiv/i.test(label)) {
         return "Blog + arXiv";
       }
@@ -244,6 +271,8 @@ function getDaySourceLabels(day) {
       return label.replace(/\s+summary$/i, "") || "Source";
     })
     .filter(Boolean);
+
+  return [...new Set(labels)];
 }
 
 function formatDayStamp(value) {

@@ -4,9 +4,12 @@
   "packageManager": "bun@1.3.0",
   "scripts": {
     "build:data": "bun ./scripts/build-summary-feed.mjs",
+    "build:articles": "bun ./scripts/build-research-articles.mjs",
     "build:css": "bunx tailwindcss -i ./src/styles.css -o ./assets/site.css --minify",
-    "build": "bun run build:data && bun run build:css",
-    "preview": "bunx serve . -l 4173"
+    "capture:service": "bun ./scripts/research-note-service.mjs",
+    "build": "bun run build:data && bun run build:articles && bun run build:css",
+    "preview": "bunx serve . -l 4173",
+    "test": "bun test"
   },
   "devDependencies": {
     "playwright": "^1.58.2",

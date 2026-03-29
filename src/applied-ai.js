@@ -139,7 +139,7 @@ if (!app) {
 createAppliedAiPage(app, PRACTICES);
 
 function createAppliedAiPage(root, items) {
-  const openEntries = new Set();
+  const entryState = new Map();
 
   root.innerHTML = renderPageShell({
     railBrand: "Applied AI: Learnings in Enterprise",
@@ -166,7 +166,7 @@ function createAppliedAiPage(root, items) {
     return;
   }
 
-  bindEntryToggles(list, openEntries, render);
+  bindEntryToggles(list, entryState, render);
   render();
 
   function render() {
@@ -174,7 +174,7 @@ function createAppliedAiPage(root, items) {
       .map((item, index) =>
         renderCollapsibleEntry(item, {
           entryKey: `practice:${index}`,
-          isExpanded: openEntries.has(`practice:${index}`),
+          isExpanded: entryState.get(`practice:${index}`) === true,
         }),
       )
       .join("");

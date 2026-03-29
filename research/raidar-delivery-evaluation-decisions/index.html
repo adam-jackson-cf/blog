@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAIDAR is an opinionated framework for delivery evaluation decisions | Research Feed</title>
+    <meta name="description" content="RAIDAR is a delivery-evaluation framework that treats harness plus model as the unit of comparison, helping teams make decision-grade judgments about AI delivery setups." />
+    <link rel="canonical" href="/research/raidar-delivery-evaluation-decisions/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Adam Jackson Blog" />
+    <meta property="og:title" content="RAIDAR is an opinionated framework for delivery evaluation decisions" />
+    <meta property="og:description" content="RAIDAR is a delivery-evaluation framework that treats harness plus model as the unit of comparison, helping teams make decision-grade judgments about AI delivery setups." />
+    <meta property="og:url" content="/research/raidar-delivery-evaluation-decisions/" />
+    <meta property="article:published_time" content="2026-03-15" />
+    <meta property="article:tag" content="Agents" />
+    <meta property="article:tag" content="Verification &amp; Evaluation" />
+    <meta property="article:tag" content="Software Delivery &amp; Design-to-Code" />
+    <link rel="stylesheet" href="../../assets/site.css" />
+  </head>
+  <body class="article-detail-page">
+    
+    <div class="page-frame">
+      <div class="page-chrome">
+        <div class="page-rail" aria-label="Feed status">
+          <div class="page-chrome-inner page-rail-inner">
+            <div class="page-rail-nav-area">
+    <nav class="page-kicker page-nav" aria-label="Primary">
+      <span class="page-kicker-dot" aria-hidden="true"></span>
+      <div class="page-nav-links">
+        <a class="page-nav-link is-active" href="../../" aria-current="page"><span class="page-nav-link-label">Research Feed</span></a><span class="page-nav-separator" aria-hidden="true">|</span><a class="page-nav-link" href="../../applied-ai/"><span class="page-nav-link-label">Applied AI</span></a>
+      </div>
+    </nav>
+  </div>
+            <div class="page-rail-meta">
+              <span class="page-rail-chip">Adam Jackson Blog</span>
+              <ul class="page-rail-contact-list">
+        <li class="page-rail-contact-item">
+          <a
+            class="page-rail-contact-link"
+            href="mailto:adam.jackson@createfuture.com"
+            aria-label="Email Adam Jackson"
+            title="Email Adam Jackson"
+            
+          >
+            <svg class="page-rail-contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/></svg>
+          </a>
+        </li>
+      
+        <li class="page-rail-contact-item">
+          <a
+            class="page-rail-contact-link"
+            href="https://github.com/adam-jackson-cf"
+            aria-label="Adam Jackson on GitHub"
+            title="Adam Jackson on GitHub"
+            target="_blank" rel="noreferrer"
+          >
+            <svg class="page-rail-contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
+          </a>
+        </li>
+      
+        <li class="page-rail-contact-item">
+          <a
+            class="page-rail-contact-link"
+            href="https://www.linkedin.com/in/adam-jackson-ff/"
+            aria-label="Adam Jackson on LinkedIn"
+            title="Adam Jackson on LinkedIn"
+            target="_blank" rel="noreferrer"
+          >
+            <svg class="page-rail-contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg>
+          </a>
+        </li>
+      </ul>
+            </div>
+          </div>
+        </div>
+        <header class="page-header">
+          <div class="page-chrome-inner page-intro">
+            <div class="page-intro-main">
+      <div class="article-page-back-row">
+        <a class="article-page-back-link" href="../../">Back to feed</a>
+      </div>
+    <h1 class="page-rail-brand"><span class="page-rail-brand-line page-rail-brand-line-primary">RAIDAR is an opinionated framework for delivery evaluation decisions</span></h1></div>
+            
+          </div>
+        </header>
+      </div>
+      <main class="page-shell">
+        
+      <section class="article-shell">
+        <div class="article-grid">
+          <aside class="article-sidebar">
+            <nav class="article-toc" aria-label="Table of contents">
+          <p class="article-meta-label">On This Page</p>
+          <ol class="article-toc-list">
+            
+                  <li class="article-toc-item article-toc-level-2">
+                    <a href="#why-i-think-this-framing-matters"><span class="article-toc-index">01</span>Why I think this framing matters</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-2">
+                    <a href="#what-raidar-is-opinionated-about"><span class="article-toc-index">02</span>What RAIDAR is opinionated about</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-2">
+                    <a href="#what-raidar-can-answer-that-generic-eval-tooling-often-can-t"><span class="article-toc-index">03</span>What RAIDAR can answer that generic eval tooling often can&#39;t</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-2">
+                    <a href="#how-it-compares-to-other-frameworks"><span class="article-toc-index">04</span>How it compares to other frameworks</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-3">
+                    <a href="#inspect-ai"><span class="article-toc-index">05</span>Inspect AI</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-3">
+                    <a href="#promptfoo"><span class="article-toc-index">06</span>Promptfoo</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-3">
+                    <a href="#deepeval"><span class="article-toc-index">07</span>DeepEval</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-2">
+                    <a href="#the-real-differentiator"><span class="article-toc-index">08</span>The real differentiator</a>
+                  </li>
+                
+                  <li class="article-toc-item article-toc-level-2">
+                    <a href="#where-i-think-this-goes-next"><span class="article-toc-index">09</span>Where I think this goes next</a>
+                  </li>
+                
+          </ol>
+        </nav>
+          </aside>
+          <article class="article-main">
+            <header class="article-header">
+              <div class="article-summary-band">
+                <p class="article-summary-label"><span class="article-kicker-dot" aria-hidden="true"></span>Article</p>
+              </div>
+            </header>
+            <div class="article-content">
+              <p>Most evaluation tooling in AI still answers the wrong question for software delivery.</p>
+<p>It tells you whether a model did well on a benchmark, whether a prompt variant scored higher, or whether an agent completed a task in a controlled environment.</p>
+<p>Those are useful signals. But they aren&#39;t the decision I usually need to make.</p>
+<p>What I actually want to know is:</p>
+<ul><li>which harness + model pair should I trust for this kind of delivery task?</li><li>where did the run fail: functional correctness, acceptance, verification, execution quality, stability?</li><li>what should I change next: prompt, rules, starter, scenario design, harness choice, or model choice?</li></ul>
+<p>That&#39;s the space RAIDAR is aimed at.</p>
+<p>RAIDAR is not a generic LLM eval toolkit. I built it as an opinionated framework for <strong>delivery evaluation decisions</strong>.</p>
+<p>The core unit is not just a prompt or a benchmark item. It&#39;s a <strong>delivery scenario</strong> plus an <strong><code>AgentSpec</code></strong>, where <code>AgentSpec = harness + model</code>.</p>
+<p>That distinction matters more than it sounds.</p>
+<h2 id="why-i-think-this-framing-matters">Why I think this framing matters</h2>
+<p>If you&#39;re evaluating real project work, the model is only part of the behaviour.</p>
+<p>The runtime surface matters. The harness matters. The rules and starter context matter. The verification setup matters. The repeatability of the outcome matters.</p>
+<p>I&#39;ve found that once you move from &quot;can this model solve a toy task?&quot; to &quot;can I use this setup to make delivery decisions?&quot;, a lot of the current tooling stops just short of what you need.</p>
+<p>You need an explicit scenario contract. You need repeated experiment runs. You need evidence bundles that help explain why something worked or failed. And you need to treat the harness as an experimental variable, not just a transport layer around the model.</p>
+<p>That&#39;s the bit most tools still miss.</p>
+<h2 id="what-raidar-is-opinionated-about">What RAIDAR is opinionated about</h2>
+<p>RAIDAR is opinionated in a few specific ways.</p>
+<p>First, it is <strong>delivery-first</strong>.</p>
+<p>The scenario is meant to look like real project work: prompt, rules, starter, verification settings, acceptance requirements, metrics, and optional visual reference where that matters.</p>
+<p>Second, it is opinionated about the <strong>decision surface</strong>.</p>
+<p>I&#39;m not only interested in whether something &quot;passed&quot;. I want to understand whether a run is good enough to support a delivery choice:</p>
+<ul><li>Is it functionally correct?</li><li>Does it satisfy the stated acceptance?</li><li>Are the verification signals trustworthy?</li><li>Is the execution valid, or did it succeed for the wrong reasons?</li><li>Is the result stable enough across repeats to rank?</li><li>Where relevant, does it stay close enough to the intended visual outcome?</li></ul>
+<p>Third, it is opinionated about the <strong>improvement loop</strong>.</p>
+<p>The output should help answer what to change next. Not in the abstract, but concretely:</p>
+<ul><li>change the prompt</li><li>tighten the rules</li><li>improve the starter</li><li>redesign the scenario</li><li>switch the harness</li><li>switch the model</li></ul>
+<p>That is very different from a benchmark leaderboard or a prompt-testing matrix, even if some of the underlying mechanics look similar.</p>
+<h2 id="what-raidar-can-answer-that-generic-eval-tooling-often-can-t">What RAIDAR can answer that generic eval tooling often can&#39;t</h2>
+<p>For me, the useful questions are things like:</p>
+<ul><li>Which harness + model pair is the best fit for this delivery task?</li><li>Which setup is most stable across repeated runs?</li><li>Is the result genuinely acceptable, or did it get through verification in a brittle way?</li><li>Is this a model problem, a harness problem, or a scenario-design problem?</li><li>Which changes improve delivery performance consistently rather than anecdotally?</li></ul>
+<p>That&#39;s why I describe RAIDAR as a framework for delivery evaluation decisions rather than simply &quot;an eval framework&quot;.</p>
+<h2 id="how-it-compares-to-other-frameworks">How it compares to other frameworks</h2>
+<p>I recently did a structured comparison of RAIDAR against <a href="https://github.com/UKGovernmentBEIS/inspect_ai" target="_blank" rel="noreferrer">Inspect AI</a>, <a href="https://github.com/promptfoo" target="_blank" rel="noreferrer">Promptfoo</a>, and <a href="https://deepeval.com/docs/getting-started" target="_blank" rel="noreferrer">DeepEval</a>.</p>
+<p>All three are good tools. They just solve different parts of the problem.</p>
+<h3 id="inspect-ai">Inspect AI</h3>
+<p><a href="https://inspect.aisi.org.uk/" target="_blank" rel="noreferrer">Inspect AI</a> is the closest architectural comparison point.</p>
+<p>If I wanted the best open-source reference for reusable tasks, execution plans, scorers, retries, logs, and multi-model evaluation sets, this is where I&#39;d start. It has the cleanest shape for structured evaluation work, and it comes closest to RAIDAR in terms of framework design.</p>
+<p>Where RAIDAR still differs is in how explicitly it centers the delivery scenario and the harness + model pair as the thing being evaluated.</p>
+<p>Inspect is the nearest analogue. It is not the same thing.</p>
+<h3 id="promptfoo">Promptfoo</h3>
+<p><a href="https://www.promptfoo.dev/docs/intro/" target="_blank" rel="noreferrer">Promptfoo</a> is the best lightweight comparison point.</p>
+<p>It is very strong if what you want is side-by-side comparison, custom assertions, quick iteration, coding-agent evaluation, and a practical feedback loop you can use quickly in CI or locally.</p>
+<p>If the question is &quot;how do I compare a lot of variants efficiently?&quot;, Promptfoo is very good.</p>
+<p>If the question is &quot;how do I make decision-grade delivery judgements from scenario runs where the harness itself is part of the experiment?&quot;, RAIDAR is more opinionated in the right place.</p>
+<h3 id="deepeval">DeepEval</h3>
+<p><a href="https://deepeval.com/docs/getting-started" target="_blank" rel="noreferrer">DeepEval</a> is the best companion evaluation layer of the three.</p>
+<p>It is strongest on evaluators, metrics, tracing, regression-style checks, and metric composition. That is valuable. In fact, that kind of capability is often exactly what you want around a delivery evaluation system.</p>
+<p>But I wouldn&#39;t frame it as a direct replacement for RAIDAR.</p>
+<p>The centre of gravity is different. DeepEval is strongest when you already have an application or runner and want better evaluators around it. RAIDAR is strongest when the missing piece is the delivery scenario and the harness/model comparison itself.</p>
+<h2 id="the-real-differentiator">The real differentiator</h2>
+<p>The clearest differentiator surfaced by the comparison work was simple:</p>
+<p><strong>RAIDAR makes <code>AgentSpec = harness + model</code> a first-class concept.</strong></p>
+<p>That sounds small, but it changes the shape of the whole system.</p>
+<p>It forces the framework to care about delivery behaviour, not just output scoring. It forces repeated comparisons to be structured around actual execution setups. And it makes the result more useful for teams trying to decide what to trust in delivery rather than what happens to score well in isolation.</p>
+<p>That is the position I think is missing from a lot of current evaluation tooling.</p>
+<h2 id="where-i-think-this-goes-next">Where I think this goes next</h2>
+<p>RAIDAR is still early, and I don&#39;t think the current shape is the end state.</p>
+<p>Two things I want to push next are:</p>
+<ul><li>a <strong>web-based review surface</strong> so the evidence and comparisons are easier to inspect, discuss, and act on</li><li><strong>autoresearch-inspired experiment handling</strong> so experiment setup, iteration, and follow-on investigation become more systematic</li></ul>
+<p>That&#39;s the direction I&#39;m interested in: not just more evals, but better ways to make delivery decisions from them.</p>
+<p>If you&#39;re working in this space, I&#39;d be interested in whether you&#39;re seeing the same gap.</p>
+<p>The benchmark story is getting better. The prompt-testing story is getting better. The metrics story is getting better.</p>
+<p>But the workflow for deciding which AI setup should be trusted for real delivery work still feels underbuilt.</p>
+<p>That&#39;s the thing RAIDAR is trying to get to.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    
+      </main>
+    </div>
+  
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const chrome = document.querySelector(".page-chrome");
+        const grid = document.querySelector(".article-grid");
+        const shell = document.querySelector(".page-shell");
+
+        const syncArticleLayout = () => {
+          if (!chrome || !grid || !shell) {
+            return;
+          }
+
+          const chromeHeight = chrome.getBoundingClientRect().height;
+          const shellPaddingTop = parseFloat(window.getComputedStyle(shell).paddingTop) || 0;
+          const sidebarTop = chromeHeight + shellPaddingTop;
+
+          root.style.setProperty("--article-chrome-height", chromeHeight.toFixed(2) + "px");
+          root.style.setProperty("--article-sidebar-top", sidebarTop.toFixed(2) + "px");
+          root.style.setProperty("--article-main-min-height", "calc(100vh - " + chromeHeight.toFixed(2) + "px - 2rem)");
+        };
+
+        syncArticleLayout();
+        window.addEventListener("resize", syncArticleLayout);
+      })();
+    </script>
+  </body>
+</html>
